@@ -1,0 +1,1753 @@
+[
+  {
+    "case_id": "DIESEL-E-001",
+    "source_f_index": 265,
+    "context": {
+      "season": "winter",
+      "blend_components": {
+        "lgo": 0.8394,
+        "hgo": 0.0839,
+        "lco": 0.0376,
+        "kero": 0.0091,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -15.2,
+        "cp": -10.5,
+        "pp": -6.3,
+        "density_15c": 835.5,
+        "n_paraffin_c10_c15": 10.8,
+        "n_paraffin_c16_c20": 9.68,
+        "n_paraffin_c21_plus": 1.38,
+        "aromatic_content": 23.6,
+        "sulfur_ppm": 9.7,
+        "cetane_index": 51.4,
+        "wafi_type": "A",
+        "wafi_ppm": 214.0
+      },
+      "target_cfpp": -9.2,
+      "tank_history_flag": "clean"
+    },
+    "ai_draft_decision": "caution",
+    "ai_draft_reason_codes": [
+      "metric_variability"
+    ],
+    "decision": "normal",
+    "reason_codes": [
+      "metric_level"
+    ],
+    "check_priority": [
+      "retest",
+      "blend_ratio",
+      "additive_dose"
+    ],
+    "risk_codes": [],
+    "rule_summary": "동절기 표준 조건 — 검사값 안정, WAFI 적정 → 출하 가능",
+    "draft_pattern": "over",
+    "narrative": "케이스 DIESEL-E-001 — 동절기 생산. 반제품 구성: LGO 0.84 / HGO 0.08 / LCO 0.04 / Kero 0.01 / Bio 0.03. 주요 검사값: 측정 CFPP -15.2°C, 목표 CFPP -9.2°C (마진 +5.9°C), n-파라핀 C16-20 9.7wt%, C21+ 1.38wt%, 밀도 15°C 835 kg/m³. 첨가제: A 타입 214ppm. 탱크 이력: clean. 베테랑 판단: 정상."
+  },
+  {
+    "case_id": "DIESEL-E-002",
+    "source_f_index": 337,
+    "context": {
+      "season": "winter",
+      "blend_components": {
+        "lgo": 0.7333,
+        "hgo": 0.0209,
+        "lco": 0.1189,
+        "kero": 0.0969,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -15.3,
+        "cp": -12.9,
+        "pp": -9.9,
+        "density_15c": 837.0,
+        "n_paraffin_c10_c15": 11.5,
+        "n_paraffin_c16_c20": 7.92,
+        "n_paraffin_c21_plus": 1.19,
+        "aromatic_content": 25.3,
+        "sulfur_ppm": 5.4,
+        "cetane_index": 50.4,
+        "wafi_type": "A",
+        "wafi_ppm": 87.0
+      },
+      "target_cfpp": -5.8,
+      "tank_history_flag": "clean"
+    },
+    "ai_draft_decision": "caution",
+    "ai_draft_reason_codes": [
+      "additive"
+    ],
+    "decision": "normal",
+    "reason_codes": [
+      "metric_level"
+    ],
+    "check_priority": [
+      "additive_dose",
+      "blend_ratio",
+      "retest"
+    ],
+    "risk_codes": [],
+    "rule_summary": "동절기 표준 조건 — 검사값 안정, WAFI 적정 → 출하 가능",
+    "draft_pattern": "over",
+    "narrative": "케이스 DIESEL-E-002 — 동절기 생산. 반제품 구성: LGO 0.73 / HGO 0.02 / LCO 0.12 / Kero 0.10 / Bio 0.03. 주요 검사값: 측정 CFPP -15.3°C, 목표 CFPP -5.8°C (마진 +9.5°C), n-파라핀 C16-20 7.9wt%, C21+ 1.19wt%, 밀도 15°C 837 kg/m³. 첨가제: A 타입 87ppm. 탱크 이력: clean. 베테랑 판단: 정상."
+  },
+  {
+    "case_id": "DIESEL-E-003",
+    "source_f_index": 223,
+    "context": {
+      "season": "winter",
+      "blend_components": {
+        "lgo": 0.4907,
+        "hgo": 0.2294,
+        "lco": 0.1715,
+        "kero": 0.0784,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -10.8,
+        "cp": -7.1,
+        "pp": -5.7,
+        "density_15c": 847.0,
+        "n_paraffin_c10_c15": 10.01,
+        "n_paraffin_c16_c20": 9.02,
+        "n_paraffin_c21_plus": 2.02,
+        "aromatic_content": 27.8,
+        "sulfur_ppm": 9.5,
+        "cetane_index": 47.5,
+        "wafi_type": "B",
+        "wafi_ppm": 268.0
+      },
+      "target_cfpp": -5.6,
+      "tank_history_flag": "clean"
+    },
+    "ai_draft_decision": "normal",
+    "ai_draft_reason_codes": [
+      "blend_component"
+    ],
+    "decision": "normal",
+    "reason_codes": [
+      "blend_component"
+    ],
+    "check_priority": [
+      "blend_ratio",
+      "retest",
+      "additive_dose"
+    ],
+    "risk_codes": [],
+    "rule_summary": "동절기 표준 조건 — 검사값 안정, WAFI 적정 → 출하 가능",
+    "draft_pattern": "match",
+    "narrative": "케이스 DIESEL-E-003 — 동절기 생산. 반제품 구성: LGO 0.49 / HGO 0.23 / LCO 0.17 / Kero 0.08 / Bio 0.03. 주요 검사값: 측정 CFPP -10.8°C, 목표 CFPP -5.6°C (마진 +5.3°C), n-파라핀 C16-20 9.0wt%, C21+ 2.02wt%, 밀도 15°C 847 kg/m³. 첨가제: B 타입 268ppm. 탱크 이력: clean. 베테랑 판단: 정상."
+  },
+  {
+    "case_id": "DIESEL-E-004",
+    "source_f_index": 271,
+    "context": {
+      "season": "winter",
+      "blend_components": {
+        "lgo": 0.7085,
+        "hgo": 0.11,
+        "lco": 0.0879,
+        "kero": 0.0636,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -15.1,
+        "cp": -12.0,
+        "pp": -7.7,
+        "density_15c": 838.3,
+        "n_paraffin_c10_c15": 12.48,
+        "n_paraffin_c16_c20": 9.28,
+        "n_paraffin_c21_plus": 2.33,
+        "aromatic_content": 24.6,
+        "sulfur_ppm": 7.8,
+        "cetane_index": 50.7,
+        "wafi_type": "C",
+        "wafi_ppm": 246.0
+      },
+      "target_cfpp": -5.2,
+      "tank_history_flag": "clean"
+    },
+    "ai_draft_decision": "caution",
+    "ai_draft_reason_codes": [
+      "metric_variability"
+    ],
+    "decision": "normal",
+    "reason_codes": [
+      "metric_level"
+    ],
+    "check_priority": [
+      "retest",
+      "blend_ratio",
+      "additive_dose"
+    ],
+    "risk_codes": [],
+    "rule_summary": "동절기 표준 조건 — 검사값 안정, WAFI 적정 → 출하 가능",
+    "draft_pattern": "over",
+    "narrative": "케이스 DIESEL-E-004 — 동절기 생산. 반제품 구성: LGO 0.71 / HGO 0.11 / LCO 0.09 / Kero 0.06 / Bio 0.03. 주요 검사값: 측정 CFPP -15.1°C, 목표 CFPP -5.2°C (마진 +9.9°C), n-파라핀 C16-20 9.3wt%, C21+ 2.33wt%, 밀도 15°C 838 kg/m³. 첨가제: C 타입 246ppm. 탱크 이력: clean. 베테랑 판단: 정상."
+  },
+  {
+    "case_id": "DIESEL-E-005",
+    "source_f_index": 140,
+    "context": {
+      "season": "winter",
+      "blend_components": {
+        "lgo": 0.5462,
+        "hgo": 0.2265,
+        "lco": 0.1103,
+        "kero": 0.087,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -13.0,
+        "cp": -10.3,
+        "pp": -7.1,
+        "density_15c": 839.4,
+        "n_paraffin_c10_c15": 10.09,
+        "n_paraffin_c16_c20": 8.63,
+        "n_paraffin_c21_plus": 2.12,
+        "aromatic_content": 24.2,
+        "sulfur_ppm": 6.6,
+        "cetane_index": 48.9,
+        "wafi_type": "B",
+        "wafi_ppm": 146.0
+      },
+      "target_cfpp": -5.4,
+      "tank_history_flag": "clean"
+    },
+    "ai_draft_decision": "normal",
+    "ai_draft_reason_codes": [
+      "metric_level"
+    ],
+    "decision": "normal",
+    "reason_codes": [
+      "metric_level"
+    ],
+    "check_priority": [
+      "additive_dose",
+      "blend_ratio",
+      "retest"
+    ],
+    "risk_codes": [],
+    "rule_summary": "동절기 표준 조건 — 검사값 안정, WAFI 적정 → 출하 가능",
+    "draft_pattern": "match",
+    "narrative": "케이스 DIESEL-E-005 — 동절기 생산. 반제품 구성: LGO 0.55 / HGO 0.23 / LCO 0.11 / Kero 0.09 / Bio 0.03. 주요 검사값: 측정 CFPP -13.0°C, 목표 CFPP -5.4°C (마진 +7.6°C), n-파라핀 C16-20 8.6wt%, C21+ 2.12wt%, 밀도 15°C 839 kg/m³. 첨가제: B 타입 146ppm. 탱크 이력: clean. 베테랑 판단: 정상."
+  },
+  {
+    "case_id": "DIESEL-E-006",
+    "source_f_index": 141,
+    "context": {
+      "season": "winter",
+      "blend_components": {
+        "lgo": 0.7784,
+        "hgo": 0.0803,
+        "lco": 0.0878,
+        "kero": 0.0235,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -11.9,
+        "cp": -7.8,
+        "pp": -6.4,
+        "density_15c": 839.2,
+        "n_paraffin_c10_c15": 10.63,
+        "n_paraffin_c16_c20": 9.62,
+        "n_paraffin_c21_plus": 1.86,
+        "aromatic_content": 23.5,
+        "sulfur_ppm": 6.3,
+        "cetane_index": 50.2,
+        "wafi_type": "C",
+        "wafi_ppm": 172.0
+      },
+      "target_cfpp": -7.7,
+      "tank_history_flag": "recent_change"
+    },
+    "ai_draft_decision": "caution",
+    "ai_draft_reason_codes": [
+      "tank_history"
+    ],
+    "decision": "caution",
+    "reason_codes": [
+      "tank_history"
+    ],
+    "check_priority": [
+      "tank_history",
+      "additive_dose",
+      "retest"
+    ],
+    "risk_codes": [
+      "historical_impact"
+    ],
+    "rule_summary": "동절기 주의 — 탱크 이력 변동 + WAFI 마진 협소 → 재확인 후 출하 결정",
+    "draft_pattern": "match",
+    "narrative": "케이스 DIESEL-E-006 — 동절기 생산. 반제품 구성: LGO 0.78 / HGO 0.08 / LCO 0.09 / Kero 0.02 / Bio 0.03. 주요 검사값: 측정 CFPP -11.9°C, 목표 CFPP -7.7°C (마진 +4.2°C), n-파라핀 C16-20 9.6wt%, C21+ 1.86wt%, 밀도 15°C 839 kg/m³. 첨가제: C 타입 172ppm. 탱크 이력: recent_change. 베테랑 판단: 주의."
+  },
+  {
+    "case_id": "DIESEL-E-007",
+    "source_f_index": 357,
+    "context": {
+      "season": "winter",
+      "blend_components": {
+        "lgo": 0.7645,
+        "hgo": 0.0989,
+        "lco": 0.0133,
+        "kero": 0.0933,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -14.3,
+        "cp": -11.3,
+        "pp": -7.6,
+        "density_15c": 831.4,
+        "n_paraffin_c10_c15": 12.29,
+        "n_paraffin_c16_c20": 9.92,
+        "n_paraffin_c21_plus": 2.4,
+        "aromatic_content": 21.7,
+        "sulfur_ppm": 8.2,
+        "cetane_index": 51.9,
+        "wafi_type": "C",
+        "wafi_ppm": 170.0
+      },
+      "target_cfpp": -10.9,
+      "tank_history_flag": "clean"
+    },
+    "ai_draft_decision": "risk",
+    "ai_draft_reason_codes": [
+      "metric_variability"
+    ],
+    "decision": "caution",
+    "reason_codes": [
+      "metric_variability"
+    ],
+    "check_priority": [
+      "additive_dose",
+      "retest",
+      "blend_ratio"
+    ],
+    "risk_codes": [
+      "within_spec_but_risky"
+    ],
+    "rule_summary": "동절기 주의 — WAFI 마진 협소 → 재확인 후 출하 결정",
+    "draft_pattern": "over",
+    "narrative": "케이스 DIESEL-E-007 — 동절기 생산. 반제품 구성: LGO 0.76 / HGO 0.10 / LCO 0.01 / Kero 0.09 / Bio 0.03. 주요 검사값: 측정 CFPP -14.3°C, 목표 CFPP -10.9°C (마진 +3.4°C), n-파라핀 C16-20 9.9wt%, C21+ 2.40wt%, 밀도 15°C 831 kg/m³. 첨가제: C 타입 170ppm. 탱크 이력: clean. 베테랑 판단: 주의."
+  },
+  {
+    "case_id": "DIESEL-E-008",
+    "source_f_index": 210,
+    "context": {
+      "season": "winter",
+      "blend_components": {
+        "lgo": 0.5681,
+        "hgo": 0.2287,
+        "lco": 0.1142,
+        "kero": 0.059,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -12.7,
+        "cp": -10.5,
+        "pp": -4.7,
+        "density_15c": 841.5,
+        "n_paraffin_c10_c15": 10.35,
+        "n_paraffin_c16_c20": 8.8,
+        "n_paraffin_c21_plus": 2.24,
+        "aromatic_content": 25.7,
+        "sulfur_ppm": 6.4,
+        "cetane_index": 48.5,
+        "wafi_type": "C",
+        "wafi_ppm": 194.0
+      },
+      "target_cfpp": -11.6,
+      "tank_history_flag": "clean"
+    },
+    "ai_draft_decision": "caution",
+    "ai_draft_reason_codes": [
+      "metric_variability"
+    ],
+    "decision": "caution",
+    "reason_codes": [
+      "metric_variability"
+    ],
+    "check_priority": [
+      "additive_dose",
+      "blend_ratio",
+      "retest"
+    ],
+    "risk_codes": [
+      "within_spec_but_risky"
+    ],
+    "rule_summary": "동절기 주의 — WAFI 마진 협소 → 재확인 후 출하 결정",
+    "draft_pattern": "match",
+    "narrative": "케이스 DIESEL-E-008 — 동절기 생산. 반제품 구성: LGO 0.57 / HGO 0.23 / LCO 0.11 / Kero 0.06 / Bio 0.03. 주요 검사값: 측정 CFPP -12.7°C, 목표 CFPP -11.6°C (마진 +1.1°C), n-파라핀 C16-20 8.8wt%, C21+ 2.24wt%, 밀도 15°C 841 kg/m³. 첨가제: C 타입 194ppm. 탱크 이력: clean. 베테랑 판단: 주의."
+  },
+  {
+    "case_id": "DIESEL-E-009",
+    "source_f_index": 235,
+    "context": {
+      "season": "winter",
+      "blend_components": {
+        "lgo": 0.5625,
+        "hgo": 0.2325,
+        "lco": 0.1247,
+        "kero": 0.0503,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -8.0,
+        "cp": -4.4,
+        "pp": -1.8,
+        "density_15c": 843.8,
+        "n_paraffin_c10_c15": 9.54,
+        "n_paraffin_c16_c20": 9.46,
+        "n_paraffin_c21_plus": 2.5,
+        "aromatic_content": 24.7,
+        "sulfur_ppm": 5.8,
+        "cetane_index": 47.3,
+        "wafi_type": "C",
+        "wafi_ppm": 90.0
+      },
+      "target_cfpp": -7.5,
+      "tank_history_flag": "clean"
+    },
+    "ai_draft_decision": "caution",
+    "ai_draft_reason_codes": [
+      "blend_component",
+      "additive"
+    ],
+    "decision": "caution",
+    "reason_codes": [
+      "blend_component",
+      "additive"
+    ],
+    "check_priority": [
+      "additive_dose",
+      "blend_ratio",
+      "retest"
+    ],
+    "risk_codes": [
+      "within_spec_but_risky"
+    ],
+    "rule_summary": "동절기 주의 — WAFI 마진 협소 → 재확인 후 출하 결정",
+    "draft_pattern": "match",
+    "narrative": "케이스 DIESEL-E-009 — 동절기 생산. 반제품 구성: LGO 0.56 / HGO 0.23 / LCO 0.12 / Kero 0.05 / Bio 0.03. 주요 검사값: 측정 CFPP -8.0°C, 목표 CFPP -7.5°C (마진 +0.5°C), n-파라핀 C16-20 9.5wt%, C21+ 2.50wt%, 밀도 15°C 844 kg/m³. 첨가제: C 타입 90ppm. 탱크 이력: clean. 베테랑 판단: 주의."
+  },
+  {
+    "case_id": "DIESEL-E-010",
+    "source_f_index": 374,
+    "context": {
+      "season": "winter",
+      "blend_components": {
+        "lgo": 0.8185,
+        "hgo": 0.0159,
+        "lco": 0.0755,
+        "kero": 0.0601,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -15.4,
+        "cp": -13.1,
+        "pp": -6.9,
+        "density_15c": 837.0,
+        "n_paraffin_c10_c15": 11.64,
+        "n_paraffin_c16_c20": 8.51,
+        "n_paraffin_c21_plus": 1.56,
+        "aromatic_content": 25.0,
+        "sulfur_ppm": 7.9,
+        "cetane_index": 49.4,
+        "wafi_type": "A",
+        "wafi_ppm": 178.0
+      },
+      "target_cfpp": -14.5,
+      "tank_history_flag": "recent_change"
+    },
+    "ai_draft_decision": "normal",
+    "ai_draft_reason_codes": [
+      "tank_history",
+      "metric_level"
+    ],
+    "decision": "caution",
+    "reason_codes": [
+      "tank_history",
+      "metric_level"
+    ],
+    "check_priority": [
+      "tank_history",
+      "additive_dose",
+      "retest"
+    ],
+    "risk_codes": [
+      "within_spec_but_risky",
+      "historical_impact"
+    ],
+    "rule_summary": "동절기 주의 — 탱크 이력 변동 + WAFI 마진 협소 → 재확인 후 출하 결정",
+    "draft_pattern": "under",
+    "narrative": "케이스 DIESEL-E-010 — 동절기 생산. 반제품 구성: LGO 0.82 / HGO 0.02 / LCO 0.08 / Kero 0.06 / Bio 0.03. 주요 검사값: 측정 CFPP -15.4°C, 목표 CFPP -14.5°C (마진 +0.9°C), n-파라핀 C16-20 8.5wt%, C21+ 1.56wt%, 밀도 15°C 837 kg/m³. 첨가제: A 타입 178ppm. 탱크 이력: recent_change. 베테랑 판단: 주의."
+  },
+  {
+    "case_id": "DIESEL-E-011",
+    "source_f_index": 258,
+    "context": {
+      "season": "winter",
+      "blend_components": {
+        "lgo": 0.798,
+        "hgo": 0.049,
+        "lco": 0.0491,
+        "kero": 0.074,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -17.6,
+        "cp": -13.0,
+        "pp": -11.9,
+        "density_15c": 833.8,
+        "n_paraffin_c10_c15": 10.34,
+        "n_paraffin_c16_c20": 9.43,
+        "n_paraffin_c21_plus": 2.38,
+        "aromatic_content": 24.0,
+        "sulfur_ppm": 9.0,
+        "cetane_index": 51.1,
+        "wafi_type": "C",
+        "wafi_ppm": 335.0
+      },
+      "target_cfpp": -8.4,
+      "tank_history_flag": "recent_change"
+    },
+    "ai_draft_decision": "caution",
+    "ai_draft_reason_codes": [
+      "tank_history"
+    ],
+    "decision": "caution",
+    "reason_codes": [
+      "tank_history"
+    ],
+    "check_priority": [
+      "tank_history",
+      "retest",
+      "blend_ratio"
+    ],
+    "risk_codes": [
+      "historical_impact"
+    ],
+    "rule_summary": "동절기 주의 — 탱크 이력 변동 → 재확인 후 출하 결정",
+    "draft_pattern": "match",
+    "narrative": "케이스 DIESEL-E-011 — 동절기 생산. 반제품 구성: LGO 0.80 / HGO 0.05 / LCO 0.05 / Kero 0.07 / Bio 0.03. 주요 검사값: 측정 CFPP -17.6°C, 목표 CFPP -8.4°C (마진 +9.3°C), n-파라핀 C16-20 9.4wt%, C21+ 2.38wt%, 밀도 15°C 834 kg/m³. 첨가제: C 타입 335ppm. 탱크 이력: recent_change. 베테랑 판단: 주의."
+  },
+  {
+    "case_id": "DIESEL-E-012",
+    "source_f_index": 364,
+    "context": {
+      "season": "winter",
+      "blend_components": {
+        "lgo": 0.8117,
+        "hgo": 0.0415,
+        "lco": 0.0712,
+        "kero": 0.0456,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -15.0,
+        "cp": -12.0,
+        "pp": -8.3,
+        "density_15c": 838.9,
+        "n_paraffin_c10_c15": 12.37,
+        "n_paraffin_c16_c20": 7.7,
+        "n_paraffin_c21_plus": 2.09,
+        "aromatic_content": 23.0,
+        "sulfur_ppm": 7.2,
+        "cetane_index": 51.1,
+        "wafi_type": "A",
+        "wafi_ppm": 306.0
+      },
+      "target_cfpp": -8.1,
+      "tank_history_flag": "mixed"
+    },
+    "ai_draft_decision": "caution",
+    "ai_draft_reason_codes": [
+      "tank_history"
+    ],
+    "decision": "caution",
+    "reason_codes": [
+      "tank_history"
+    ],
+    "check_priority": [
+      "tank_history",
+      "retest",
+      "blend_ratio"
+    ],
+    "risk_codes": [
+      "historical_impact"
+    ],
+    "rule_summary": "동절기 주의 — 탱크 이력 변동 → 재확인 후 출하 결정",
+    "draft_pattern": "match",
+    "narrative": "케이스 DIESEL-E-012 — 동절기 생산. 반제품 구성: LGO 0.81 / HGO 0.04 / LCO 0.07 / Kero 0.05 / Bio 0.03. 주요 검사값: 측정 CFPP -15.0°C, 목표 CFPP -8.1°C (마진 +6.9°C), n-파라핀 C16-20 7.7wt%, C21+ 2.09wt%, 밀도 15°C 839 kg/m³. 첨가제: A 타입 306ppm. 탱크 이력: mixed. 베테랑 판단: 주의."
+  },
+  {
+    "case_id": "DIESEL-E-013",
+    "source_f_index": 461,
+    "context": {
+      "season": "winter",
+      "blend_components": {
+        "lgo": 0.5672,
+        "hgo": 0.2593,
+        "lco": 0.1206,
+        "kero": 0.0229,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -12.3,
+        "cp": -7.5,
+        "pp": -6.1,
+        "density_15c": 842.8,
+        "n_paraffin_c10_c15": 8.88,
+        "n_paraffin_c16_c20": 10.49,
+        "n_paraffin_c21_plus": 2.47,
+        "aromatic_content": 26.3,
+        "sulfur_ppm": 7.6,
+        "cetane_index": 48.6,
+        "wafi_type": "C",
+        "wafi_ppm": 312.0
+      },
+      "target_cfpp": -10.2,
+      "tank_history_flag": "recent_change"
+    },
+    "ai_draft_decision": "caution",
+    "ai_draft_reason_codes": [
+      "tank_history",
+      "blend_component"
+    ],
+    "decision": "caution",
+    "reason_codes": [
+      "tank_history",
+      "blend_component"
+    ],
+    "check_priority": [
+      "tank_history",
+      "blend_ratio",
+      "retest"
+    ],
+    "risk_codes": [
+      "historical_impact"
+    ],
+    "rule_summary": "동절기 주의 — 탱크 이력 변동 → 재확인 후 출하 결정",
+    "draft_pattern": "match",
+    "narrative": "케이스 DIESEL-E-013 — 동절기 생산. 반제품 구성: LGO 0.57 / HGO 0.26 / LCO 0.12 / Kero 0.02 / Bio 0.03. 주요 검사값: 측정 CFPP -12.3°C, 목표 CFPP -10.2°C (마진 +2.1°C), n-파라핀 C16-20 10.5wt%, C21+ 2.47wt%, 밀도 15°C 843 kg/m³. 첨가제: C 타입 312ppm. 탱크 이력: recent_change. 베테랑 판단: 주의."
+  },
+  {
+    "case_id": "DIESEL-E-014",
+    "source_f_index": 202,
+    "context": {
+      "season": "winter",
+      "blend_components": {
+        "lgo": 0.5447,
+        "hgo": 0.267,
+        "lco": 0.1315,
+        "kero": 0.0268,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -10.8,
+        "cp": -7.4,
+        "pp": -4.0,
+        "density_15c": 844.8,
+        "n_paraffin_c10_c15": 8.62,
+        "n_paraffin_c16_c20": 8.37,
+        "n_paraffin_c21_plus": 1.78,
+        "aromatic_content": 27.9,
+        "sulfur_ppm": 8.7,
+        "cetane_index": 49.0,
+        "wafi_type": "B",
+        "wafi_ppm": 311.0
+      },
+      "target_cfpp": -14.7,
+      "tank_history_flag": "clean"
+    },
+    "ai_draft_decision": "caution",
+    "ai_draft_reason_codes": [
+      "blend_component",
+      "metric_level"
+    ],
+    "decision": "risk",
+    "reason_codes": [
+      "blend_component",
+      "metric_level"
+    ],
+    "check_priority": [
+      "blend_ratio",
+      "retest",
+      "additive_dose"
+    ],
+    "risk_codes": [
+      "post_issue_possible"
+    ],
+    "rule_summary": "동절기 위험 — CFPP 목표 미달 → WAFI 증량 또는 재블렌딩 필요",
+    "draft_pattern": "under",
+    "narrative": "케이스 DIESEL-E-014 — 동절기 생산. 반제품 구성: LGO 0.54 / HGO 0.27 / LCO 0.13 / Kero 0.03 / Bio 0.03. 주요 검사값: 측정 CFPP -10.8°C, 목표 CFPP -14.7°C (마진 -3.8°C), n-파라핀 C16-20 8.4wt%, C21+ 1.78wt%, 밀도 15°C 845 kg/m³. 첨가제: B 타입 311ppm. 탱크 이력: clean. 베테랑 판단: 위험."
+  },
+  {
+    "case_id": "DIESEL-E-015",
+    "source_f_index": 315,
+    "context": {
+      "season": "winter",
+      "blend_components": {
+        "lgo": 0.5522,
+        "hgo": 0.1926,
+        "lco": 0.179,
+        "kero": 0.0462,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -10.7,
+        "cp": -6.9,
+        "pp": -3.1,
+        "density_15c": 845.0,
+        "n_paraffin_c10_c15": 8.93,
+        "n_paraffin_c16_c20": 8.84,
+        "n_paraffin_c21_plus": 2.42,
+        "aromatic_content": 27.0,
+        "sulfur_ppm": 7.0,
+        "cetane_index": 46.0,
+        "wafi_type": "C",
+        "wafi_ppm": 307.0
+      },
+      "target_cfpp": -11.2,
+      "tank_history_flag": "recent_change"
+    },
+    "ai_draft_decision": "caution",
+    "ai_draft_reason_codes": [
+      "tank_history",
+      "blend_component"
+    ],
+    "decision": "risk",
+    "reason_codes": [
+      "tank_history",
+      "blend_component"
+    ],
+    "check_priority": [
+      "tank_history",
+      "blend_ratio",
+      "retest"
+    ],
+    "risk_codes": [
+      "historical_impact",
+      "post_issue_possible"
+    ],
+    "rule_summary": "동절기 위험 — CFPP 목표 미달 → WAFI 증량 또는 재블렌딩 필요",
+    "draft_pattern": "under",
+    "narrative": "케이스 DIESEL-E-015 — 동절기 생산. 반제품 구성: LGO 0.55 / HGO 0.19 / LCO 0.18 / Kero 0.05 / Bio 0.03. 주요 검사값: 측정 CFPP -10.7°C, 목표 CFPP -11.2°C (마진 -0.5°C), n-파라핀 C16-20 8.8wt%, C21+ 2.42wt%, 밀도 15°C 845 kg/m³. 첨가제: C 타입 307ppm. 탱크 이력: recent_change. 베테랑 판단: 위험."
+  },
+  {
+    "case_id": "DIESEL-E-016",
+    "source_f_index": 394,
+    "context": {
+      "season": "winter",
+      "blend_components": {
+        "lgo": 0.571,
+        "hgo": 0.2129,
+        "lco": 0.0961,
+        "kero": 0.09,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -7.0,
+        "cp": -4.7,
+        "pp": 0.2,
+        "density_15c": 839.2,
+        "n_paraffin_c10_c15": 11.8,
+        "n_paraffin_c16_c20": 9.34,
+        "n_paraffin_c21_plus": 2.39,
+        "aromatic_content": 25.3,
+        "sulfur_ppm": 6.9,
+        "cetane_index": 48.2,
+        "wafi_type": "A",
+        "wafi_ppm": 73.0
+      },
+      "target_cfpp": -10.8,
+      "tank_history_flag": "mixed"
+    },
+    "ai_draft_decision": "risk",
+    "ai_draft_reason_codes": [
+      "tank_history",
+      "additive"
+    ],
+    "decision": "risk",
+    "reason_codes": [
+      "tank_history",
+      "additive"
+    ],
+    "check_priority": [
+      "tank_history",
+      "additive_dose",
+      "blend_ratio"
+    ],
+    "risk_codes": [
+      "historical_impact",
+      "post_issue_possible"
+    ],
+    "rule_summary": "동절기 위험 — CFPP 목표 미달 + WAFI 부족 → WAFI 증량 또는 재블렌딩 필요",
+    "draft_pattern": "match",
+    "narrative": "케이스 DIESEL-E-016 — 동절기 생산. 반제품 구성: LGO 0.57 / HGO 0.21 / LCO 0.10 / Kero 0.09 / Bio 0.03. 주요 검사값: 측정 CFPP -7.0°C, 목표 CFPP -10.8°C (마진 -3.8°C), n-파라핀 C16-20 9.3wt%, C21+ 2.39wt%, 밀도 15°C 839 kg/m³. 첨가제: A 타입 73ppm. 탱크 이력: mixed. 베테랑 판단: 위험."
+  },
+  {
+    "case_id": "DIESEL-E-017",
+    "source_f_index": 310,
+    "context": {
+      "season": "winter",
+      "blend_components": {
+        "lgo": 0.6728,
+        "hgo": 0.0843,
+        "lco": 0.1978,
+        "kero": 0.0151,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -4.3,
+        "cp": -0.6,
+        "pp": 2.7,
+        "density_15c": 844.7,
+        "n_paraffin_c10_c15": 10.92,
+        "n_paraffin_c16_c20": 8.58,
+        "n_paraffin_c21_plus": 2.19,
+        "aromatic_content": 26.5,
+        "sulfur_ppm": 8.9,
+        "cetane_index": 46.8,
+        "wafi_type": "none",
+        "wafi_ppm": 0.0
+      },
+      "target_cfpp": -9.2,
+      "tank_history_flag": "recent_change"
+    },
+    "ai_draft_decision": "risk",
+    "ai_draft_reason_codes": [
+      "tank_history",
+      "blend_component"
+    ],
+    "decision": "risk",
+    "reason_codes": [
+      "tank_history",
+      "blend_component"
+    ],
+    "check_priority": [
+      "tank_history",
+      "additive_dose",
+      "blend_ratio"
+    ],
+    "risk_codes": [
+      "historical_impact",
+      "post_issue_possible"
+    ],
+    "rule_summary": "동절기 위험 — CFPP 목표 미달 + WAFI 부족 → WAFI 증량 또는 재블렌딩 필요",
+    "draft_pattern": "match",
+    "narrative": "케이스 DIESEL-E-017 — 동절기 생산. 반제품 구성: LGO 0.67 / HGO 0.08 / LCO 0.20 / Kero 0.02 / Bio 0.03. 주요 검사값: 측정 CFPP -4.3°C, 목표 CFPP -9.2°C (마진 -4.8°C), n-파라핀 C16-20 8.6wt%, C21+ 2.19wt%, 밀도 15°C 845 kg/m³. 첨가제: none 타입 0ppm. 탱크 이력: recent_change. 베테랑 판단: 위험."
+  },
+  {
+    "case_id": "DIESEL-E-018",
+    "source_f_index": 66,
+    "context": {
+      "season": "winter",
+      "blend_components": {
+        "lgo": 0.7401,
+        "hgo": 0.1828,
+        "lco": 0.002,
+        "kero": 0.045,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -9.1,
+        "cp": -4.2,
+        "pp": -2.2,
+        "density_15c": 835.4,
+        "n_paraffin_c10_c15": 10.8,
+        "n_paraffin_c16_c20": 9.65,
+        "n_paraffin_c21_plus": 2.19,
+        "aromatic_content": 22.1,
+        "sulfur_ppm": 8.5,
+        "cetane_index": 51.2,
+        "wafi_type": "C",
+        "wafi_ppm": 123.0
+      },
+      "target_cfpp": -10.9,
+      "tank_history_flag": "mixed"
+    },
+    "ai_draft_decision": "caution",
+    "ai_draft_reason_codes": [
+      "tank_history",
+      "additive"
+    ],
+    "decision": "risk",
+    "reason_codes": [
+      "tank_history",
+      "additive"
+    ],
+    "check_priority": [
+      "tank_history",
+      "additive_dose",
+      "retest"
+    ],
+    "risk_codes": [
+      "historical_impact",
+      "post_issue_possible"
+    ],
+    "rule_summary": "동절기 위험 — CFPP 목표 미달 + WAFI 부족 → WAFI 증량 또는 재블렌딩 필요",
+    "draft_pattern": "under",
+    "narrative": "케이스 DIESEL-E-018 — 동절기 생산. 반제품 구성: LGO 0.74 / HGO 0.18 / LCO 0.00 / Kero 0.05 / Bio 0.03. 주요 검사값: 측정 CFPP -9.1°C, 목표 CFPP -10.9°C (마진 -1.8°C), n-파라핀 C16-20 9.6wt%, C21+ 2.19wt%, 밀도 15°C 835 kg/m³. 첨가제: C 타입 123ppm. 탱크 이력: mixed. 베테랑 판단: 위험."
+  },
+  {
+    "case_id": "DIESEL-E-019",
+    "source_f_index": 108,
+    "context": {
+      "season": "deep_winter",
+      "blend_components": {
+        "lgo": 0.7268,
+        "hgo": 0.0559,
+        "lco": 0.1106,
+        "kero": 0.0767,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -19.0,
+        "cp": -16.6,
+        "pp": -12.5,
+        "density_15c": 833.6,
+        "n_paraffin_c10_c15": 12.31,
+        "n_paraffin_c16_c20": 8.34,
+        "n_paraffin_c21_plus": 1.73,
+        "aromatic_content": 25.2,
+        "sulfur_ppm": 8.8,
+        "cetane_index": 48.9,
+        "wafi_type": "A",
+        "wafi_ppm": 245.0
+      },
+      "target_cfpp": -11.4,
+      "tank_history_flag": "clean"
+    },
+    "ai_draft_decision": "normal",
+    "ai_draft_reason_codes": [
+      "metric_level"
+    ],
+    "decision": "normal",
+    "reason_codes": [
+      "metric_level"
+    ],
+    "check_priority": [
+      "blend_ratio",
+      "retest",
+      "additive_dose"
+    ],
+    "risk_codes": [],
+    "rule_summary": "혹한기 표준 조건 — 검사값 안정, WAFI 적정 → 출하 가능",
+    "draft_pattern": "match",
+    "narrative": "케이스 DIESEL-E-019 — 혹한기 생산. 반제품 구성: LGO 0.73 / HGO 0.06 / LCO 0.11 / Kero 0.08 / Bio 0.03. 주요 검사값: 측정 CFPP -19.0°C, 목표 CFPP -11.4°C (마진 +7.6°C), n-파라핀 C16-20 8.3wt%, C21+ 1.73wt%, 밀도 15°C 834 kg/m³. 첨가제: A 타입 245ppm. 탱크 이력: clean. 베테랑 판단: 정상."
+  },
+  {
+    "case_id": "DIESEL-E-020",
+    "source_f_index": 215,
+    "context": {
+      "season": "deep_winter",
+      "blend_components": {
+        "lgo": 0.7783,
+        "hgo": 0.0153,
+        "lco": 0.118,
+        "kero": 0.0585,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -18.1,
+        "cp": -14.5,
+        "pp": -10.0,
+        "density_15c": 836.6,
+        "n_paraffin_c10_c15": 10.2,
+        "n_paraffin_c16_c20": 8.6,
+        "n_paraffin_c21_plus": 1.65,
+        "aromatic_content": 25.1,
+        "sulfur_ppm": 9.2,
+        "cetane_index": 49.9,
+        "wafi_type": "B",
+        "wafi_ppm": 486.0
+      },
+      "target_cfpp": -10.2,
+      "tank_history_flag": "clean"
+    },
+    "ai_draft_decision": "normal",
+    "ai_draft_reason_codes": [
+      "metric_level"
+    ],
+    "decision": "normal",
+    "reason_codes": [
+      "metric_level"
+    ],
+    "check_priority": [
+      "blend_ratio",
+      "retest",
+      "additive_dose"
+    ],
+    "risk_codes": [],
+    "rule_summary": "혹한기 표준 조건 — 검사값 안정, WAFI 적정 → 출하 가능",
+    "draft_pattern": "match",
+    "narrative": "케이스 DIESEL-E-020 — 혹한기 생산. 반제품 구성: LGO 0.78 / HGO 0.02 / LCO 0.12 / Kero 0.06 / Bio 0.03. 주요 검사값: 측정 CFPP -18.1°C, 목표 CFPP -10.2°C (마진 +7.9°C), n-파라핀 C16-20 8.6wt%, C21+ 1.65wt%, 밀도 15°C 837 kg/m³. 첨가제: B 타입 486ppm. 탱크 이력: clean. 베테랑 판단: 정상."
+  },
+  {
+    "case_id": "DIESEL-E-021",
+    "source_f_index": 449,
+    "context": {
+      "season": "deep_winter",
+      "blend_components": {
+        "lgo": 0.7272,
+        "hgo": 0.1095,
+        "lco": 0.1051,
+        "kero": 0.0282,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -17.8,
+        "cp": -13.8,
+        "pp": -9.2,
+        "density_15c": 841.0,
+        "n_paraffin_c10_c15": 9.61,
+        "n_paraffin_c16_c20": 8.77,
+        "n_paraffin_c21_plus": 1.78,
+        "aromatic_content": 27.3,
+        "sulfur_ppm": 6.4,
+        "cetane_index": 49.9,
+        "wafi_type": "C",
+        "wafi_ppm": 478.0
+      },
+      "target_cfpp": -10.1,
+      "tank_history_flag": "clean"
+    },
+    "ai_draft_decision": "normal",
+    "ai_draft_reason_codes": [
+      "metric_level"
+    ],
+    "decision": "normal",
+    "reason_codes": [
+      "metric_level"
+    ],
+    "check_priority": [
+      "blend_ratio",
+      "retest",
+      "additive_dose"
+    ],
+    "risk_codes": [],
+    "rule_summary": "혹한기 표준 조건 — 검사값 안정, WAFI 적정 → 출하 가능",
+    "draft_pattern": "match",
+    "narrative": "케이스 DIESEL-E-021 — 혹한기 생산. 반제품 구성: LGO 0.73 / HGO 0.11 / LCO 0.11 / Kero 0.03 / Bio 0.03. 주요 검사값: 측정 CFPP -17.8°C, 목표 CFPP -10.1°C (마진 +7.7°C), n-파라핀 C16-20 8.8wt%, C21+ 1.78wt%, 밀도 15°C 841 kg/m³. 첨가제: C 타입 478ppm. 탱크 이력: clean. 베테랑 판단: 정상."
+  },
+  {
+    "case_id": "DIESEL-E-022",
+    "source_f_index": 358,
+    "context": {
+      "season": "deep_winter",
+      "blend_components": {
+        "lgo": 0.6629,
+        "hgo": 0.1573,
+        "lco": 0.0779,
+        "kero": 0.0719,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -17.0,
+        "cp": -12.4,
+        "pp": -9.8,
+        "density_15c": 838.1,
+        "n_paraffin_c10_c15": 10.48,
+        "n_paraffin_c16_c20": 7.83,
+        "n_paraffin_c21_plus": 1.69,
+        "aromatic_content": 25.0,
+        "sulfur_ppm": 9.5,
+        "cetane_index": 49.7,
+        "wafi_type": "A",
+        "wafi_ppm": 277.0
+      },
+      "target_cfpp": -10.7,
+      "tank_history_flag": "clean"
+    },
+    "ai_draft_decision": "normal",
+    "ai_draft_reason_codes": [
+      "metric_level"
+    ],
+    "decision": "normal",
+    "reason_codes": [
+      "metric_level"
+    ],
+    "check_priority": [
+      "retest",
+      "blend_ratio",
+      "additive_dose"
+    ],
+    "risk_codes": [],
+    "rule_summary": "혹한기 표준 조건 — 검사값 안정, WAFI 적정 → 출하 가능",
+    "draft_pattern": "match",
+    "narrative": "케이스 DIESEL-E-022 — 혹한기 생산. 반제품 구성: LGO 0.66 / HGO 0.16 / LCO 0.08 / Kero 0.07 / Bio 0.03. 주요 검사값: 측정 CFPP -17.0°C, 목표 CFPP -10.7°C (마진 +6.2°C), n-파라핀 C16-20 7.8wt%, C21+ 1.69wt%, 밀도 15°C 838 kg/m³. 첨가제: A 타입 277ppm. 탱크 이력: clean. 베테랑 판단: 정상."
+  },
+  {
+    "case_id": "DIESEL-E-023",
+    "source_f_index": 390,
+    "context": {
+      "season": "deep_winter",
+      "blend_components": {
+        "lgo": 0.8136,
+        "hgo": 0.0071,
+        "lco": 0.0637,
+        "kero": 0.0856,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -20.7,
+        "cp": -17.5,
+        "pp": -12.7,
+        "density_15c": 831.9,
+        "n_paraffin_c10_c15": 11.91,
+        "n_paraffin_c16_c20": 8.8,
+        "n_paraffin_c21_plus": 1.66,
+        "aromatic_content": 20.2,
+        "sulfur_ppm": 9.5,
+        "cetane_index": 50.1,
+        "wafi_type": "C",
+        "wafi_ppm": 453.0
+      },
+      "target_cfpp": -14.0,
+      "tank_history_flag": "clean"
+    },
+    "ai_draft_decision": "normal",
+    "ai_draft_reason_codes": [
+      "metric_level"
+    ],
+    "decision": "normal",
+    "reason_codes": [
+      "metric_level"
+    ],
+    "check_priority": [
+      "retest",
+      "blend_ratio",
+      "additive_dose"
+    ],
+    "risk_codes": [],
+    "rule_summary": "혹한기 표준 조건 — 검사값 안정, WAFI 적정 → 출하 가능",
+    "draft_pattern": "match",
+    "narrative": "케이스 DIESEL-E-023 — 혹한기 생산. 반제품 구성: LGO 0.81 / HGO 0.01 / LCO 0.06 / Kero 0.09 / Bio 0.03. 주요 검사값: 측정 CFPP -20.7°C, 목표 CFPP -14.0°C (마진 +6.7°C), n-파라핀 C16-20 8.8wt%, C21+ 1.66wt%, 밀도 15°C 832 kg/m³. 첨가제: C 타입 453ppm. 탱크 이력: clean. 베테랑 판단: 정상."
+  },
+  {
+    "case_id": "DIESEL-E-024",
+    "source_f_index": 329,
+    "context": {
+      "season": "deep_winter",
+      "blend_components": {
+        "lgo": 0.7429,
+        "hgo": 0.1057,
+        "lco": 0.0461,
+        "kero": 0.0753,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -16.0,
+        "cp": -12.1,
+        "pp": -8.5,
+        "density_15c": 833.7,
+        "n_paraffin_c10_c15": 10.54,
+        "n_paraffin_c16_c20": 9.25,
+        "n_paraffin_c21_plus": 1.71,
+        "aromatic_content": 24.1,
+        "sulfur_ppm": 7.9,
+        "cetane_index": 49.9,
+        "wafi_type": "A",
+        "wafi_ppm": 430.0
+      },
+      "target_cfpp": -14.9,
+      "tank_history_flag": "mixed"
+    },
+    "ai_draft_decision": "caution",
+    "ai_draft_reason_codes": [
+      "tank_history",
+      "seasonality"
+    ],
+    "decision": "caution",
+    "reason_codes": [
+      "tank_history",
+      "seasonality"
+    ],
+    "check_priority": [
+      "tank_history",
+      "retest",
+      "blend_ratio"
+    ],
+    "risk_codes": [
+      "within_spec_but_risky",
+      "conditional_quality_risk",
+      "historical_impact"
+    ],
+    "rule_summary": "혹한기 주의 — 탱크 이력 변동 → 재확인 후 출하 결정",
+    "draft_pattern": "match",
+    "narrative": "케이스 DIESEL-E-024 — 혹한기 생산. 반제품 구성: LGO 0.74 / HGO 0.11 / LCO 0.05 / Kero 0.08 / Bio 0.03. 주요 검사값: 측정 CFPP -16.0°C, 목표 CFPP -14.9°C (마진 +1.1°C), n-파라핀 C16-20 9.3wt%, C21+ 1.71wt%, 밀도 15°C 834 kg/m³. 첨가제: A 타입 430ppm. 탱크 이력: mixed. 베테랑 판단: 주의."
+  },
+  {
+    "case_id": "DIESEL-E-025",
+    "source_f_index": 380,
+    "context": {
+      "season": "deep_winter",
+      "blend_components": {
+        "lgo": 0.6236,
+        "hgo": 0.2075,
+        "lco": 0.1163,
+        "kero": 0.0226,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -12.8,
+        "cp": -8.8,
+        "pp": -6.8,
+        "density_15c": 842.5,
+        "n_paraffin_c10_c15": 9.76,
+        "n_paraffin_c16_c20": 9.91,
+        "n_paraffin_c21_plus": 1.82,
+        "aromatic_content": 27.2,
+        "sulfur_ppm": 9.8,
+        "cetane_index": 48.0,
+        "wafi_type": "A",
+        "wafi_ppm": 264.0
+      },
+      "target_cfpp": -12.4,
+      "tank_history_flag": "clean"
+    },
+    "ai_draft_decision": "normal",
+    "ai_draft_reason_codes": [
+      "metric_level"
+    ],
+    "decision": "caution",
+    "reason_codes": [
+      "seasonality",
+      "metric_level"
+    ],
+    "check_priority": [
+      "blend_ratio",
+      "retest",
+      "additive_dose"
+    ],
+    "risk_codes": [
+      "within_spec_but_risky",
+      "conditional_quality_risk"
+    ],
+    "rule_summary": "혹한기 주의 — 검사값 경계 근접 → 재확인 후 출하 결정",
+    "draft_pattern": "under",
+    "narrative": "케이스 DIESEL-E-025 — 혹한기 생산. 반제품 구성: LGO 0.62 / HGO 0.21 / LCO 0.12 / Kero 0.02 / Bio 0.03. 주요 검사값: 측정 CFPP -12.8°C, 목표 CFPP -12.4°C (마진 +0.4°C), n-파라핀 C16-20 9.9wt%, C21+ 1.82wt%, 밀도 15°C 843 kg/m³. 첨가제: A 타입 264ppm. 탱크 이력: clean. 베테랑 판단: 주의."
+  },
+  {
+    "case_id": "DIESEL-E-026",
+    "source_f_index": 410,
+    "context": {
+      "season": "deep_winter",
+      "blend_components": {
+        "lgo": 0.6276,
+        "hgo": 0.1592,
+        "lco": 0.1021,
+        "kero": 0.081,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -17.2,
+        "cp": -13.1,
+        "pp": -8.9,
+        "density_15c": 838.5,
+        "n_paraffin_c10_c15": 9.45,
+        "n_paraffin_c16_c20": 7.58,
+        "n_paraffin_c21_plus": 1.98,
+        "aromatic_content": 23.5,
+        "sulfur_ppm": 8.7,
+        "cetane_index": 49.5,
+        "wafi_type": "C",
+        "wafi_ppm": 329.0
+      },
+      "target_cfpp": -12.4,
+      "tank_history_flag": "recent_change"
+    },
+    "ai_draft_decision": "normal",
+    "ai_draft_reason_codes": [
+      "tank_history"
+    ],
+    "decision": "caution",
+    "reason_codes": [
+      "tank_history",
+      "seasonality"
+    ],
+    "check_priority": [
+      "tank_history",
+      "blend_ratio",
+      "retest"
+    ],
+    "risk_codes": [
+      "conditional_quality_risk",
+      "historical_impact"
+    ],
+    "rule_summary": "혹한기 주의 — 탱크 이력 변동 → 재확인 후 출하 결정",
+    "draft_pattern": "under",
+    "narrative": "케이스 DIESEL-E-026 — 혹한기 생산. 반제품 구성: LGO 0.63 / HGO 0.16 / LCO 0.10 / Kero 0.08 / Bio 0.03. 주요 검사값: 측정 CFPP -17.2°C, 목표 CFPP -12.4°C (마진 +4.8°C), n-파라핀 C16-20 7.6wt%, C21+ 1.98wt%, 밀도 15°C 838 kg/m³. 첨가제: C 타입 329ppm. 탱크 이력: recent_change. 베테랑 판단: 주의."
+  },
+  {
+    "case_id": "DIESEL-E-027",
+    "source_f_index": 431,
+    "context": {
+      "season": "deep_winter",
+      "blend_components": {
+        "lgo": 0.8351,
+        "hgo": 0.0132,
+        "lco": 0.0738,
+        "kero": 0.0479,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -13.8,
+        "cp": -10.5,
+        "pp": -8.4,
+        "density_15c": 831.5,
+        "n_paraffin_c10_c15": 11.1,
+        "n_paraffin_c16_c20": 9.11,
+        "n_paraffin_c21_plus": 1.85,
+        "aromatic_content": 23.1,
+        "sulfur_ppm": 6.4,
+        "cetane_index": 50.3,
+        "wafi_type": "A",
+        "wafi_ppm": 192.0
+      },
+      "target_cfpp": -13.2,
+      "tank_history_flag": "recent_change"
+    },
+    "ai_draft_decision": "normal",
+    "ai_draft_reason_codes": [
+      "tank_history",
+      "metric_level"
+    ],
+    "decision": "caution",
+    "reason_codes": [
+      "tank_history",
+      "seasonality"
+    ],
+    "check_priority": [
+      "tank_history",
+      "additive_dose",
+      "retest"
+    ],
+    "risk_codes": [
+      "within_spec_but_risky",
+      "conditional_quality_risk",
+      "historical_impact"
+    ],
+    "rule_summary": "혹한기 주의 — 탱크 이력 변동 + WAFI 마진 협소 → 재확인 후 출하 결정",
+    "draft_pattern": "under",
+    "narrative": "케이스 DIESEL-E-027 — 혹한기 생산. 반제품 구성: LGO 0.84 / HGO 0.01 / LCO 0.07 / Kero 0.05 / Bio 0.03. 주요 검사값: 측정 CFPP -13.8°C, 목표 CFPP -13.2°C (마진 +0.6°C), n-파라핀 C16-20 9.1wt%, C21+ 1.85wt%, 밀도 15°C 832 kg/m³. 첨가제: A 타입 192ppm. 탱크 이력: recent_change. 베테랑 판단: 주의."
+  },
+  {
+    "case_id": "DIESEL-E-028",
+    "source_f_index": 467,
+    "context": {
+      "season": "deep_winter",
+      "blend_components": {
+        "lgo": 0.6517,
+        "hgo": 0.0203,
+        "lco": 0.1995,
+        "kero": 0.0985,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -15.5,
+        "cp": -11.3,
+        "pp": -9.9,
+        "density_15c": 838.6,
+        "n_paraffin_c10_c15": 11.29,
+        "n_paraffin_c16_c20": 8.18,
+        "n_paraffin_c21_plus": 1.93,
+        "aromatic_content": 25.1,
+        "sulfur_ppm": 7.8,
+        "cetane_index": 46.6,
+        "wafi_type": "A",
+        "wafi_ppm": 364.0
+      },
+      "target_cfpp": -12.5,
+      "tank_history_flag": "recent_change"
+    },
+    "ai_draft_decision": "caution",
+    "ai_draft_reason_codes": [
+      "tank_history",
+      "blend_component"
+    ],
+    "decision": "caution",
+    "reason_codes": [
+      "tank_history",
+      "blend_component"
+    ],
+    "check_priority": [
+      "tank_history",
+      "blend_ratio",
+      "retest"
+    ],
+    "risk_codes": [
+      "conditional_quality_risk",
+      "historical_impact"
+    ],
+    "rule_summary": "혹한기 주의 — 탱크 이력 변동 → 재확인 후 출하 결정",
+    "draft_pattern": "match",
+    "narrative": "케이스 DIESEL-E-028 — 혹한기 생산. 반제품 구성: LGO 0.65 / HGO 0.02 / LCO 0.20 / Kero 0.10 / Bio 0.03. 주요 검사값: 측정 CFPP -15.5°C, 목표 CFPP -12.5°C (마진 +3.0°C), n-파라핀 C16-20 8.2wt%, C21+ 1.93wt%, 밀도 15°C 839 kg/m³. 첨가제: A 타입 364ppm. 탱크 이력: recent_change. 베테랑 판단: 주의."
+  },
+  {
+    "case_id": "DIESEL-E-029",
+    "source_f_index": 67,
+    "context": {
+      "season": "deep_winter",
+      "blend_components": {
+        "lgo": 0.548,
+        "hgo": 0.1642,
+        "lco": 0.1606,
+        "kero": 0.0971,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -15.1,
+        "cp": -13.0,
+        "pp": -8.1,
+        "density_15c": 842.0,
+        "n_paraffin_c10_c15": 11.06,
+        "n_paraffin_c16_c20": 8.2,
+        "n_paraffin_c21_plus": 1.94,
+        "aromatic_content": 26.9,
+        "sulfur_ppm": 7.7,
+        "cetane_index": 46.3,
+        "wafi_type": "A",
+        "wafi_ppm": 322.0
+      },
+      "target_cfpp": -15.0,
+      "tank_history_flag": "clean"
+    },
+    "ai_draft_decision": "caution",
+    "ai_draft_reason_codes": [
+      "blend_component",
+      "seasonality"
+    ],
+    "decision": "caution",
+    "reason_codes": [
+      "blend_component",
+      "seasonality"
+    ],
+    "check_priority": [
+      "blend_ratio",
+      "retest",
+      "additive_dose"
+    ],
+    "risk_codes": [
+      "within_spec_but_risky",
+      "conditional_quality_risk"
+    ],
+    "rule_summary": "혹한기 주의 — 검사값 경계 근접 → 재확인 후 출하 결정",
+    "draft_pattern": "match",
+    "narrative": "케이스 DIESEL-E-029 — 혹한기 생산. 반제품 구성: LGO 0.55 / HGO 0.16 / LCO 0.16 / Kero 0.10 / Bio 0.03. 주요 검사값: 측정 CFPP -15.1°C, 목표 CFPP -15.0°C (마진 +0.2°C), n-파라핀 C16-20 8.2wt%, C21+ 1.94wt%, 밀도 15°C 842 kg/m³. 첨가제: A 타입 322ppm. 탱크 이력: clean. 베테랑 판단: 주의."
+  },
+  {
+    "case_id": "DIESEL-E-030",
+    "source_f_index": 382,
+    "context": {
+      "season": "deep_winter",
+      "blend_components": {
+        "lgo": 0.4759,
+        "hgo": 0.2877,
+        "lco": 0.1158,
+        "kero": 0.0907,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -14.4,
+        "cp": -12.1,
+        "pp": -8.7,
+        "density_15c": 840.5,
+        "n_paraffin_c10_c15": 9.3,
+        "n_paraffin_c16_c20": 7.45,
+        "n_paraffin_c21_plus": 2.17,
+        "aromatic_content": 27.6,
+        "sulfur_ppm": 6.8,
+        "cetane_index": 48.3,
+        "wafi_type": "A",
+        "wafi_ppm": 339.0
+      },
+      "target_cfpp": -10.9,
+      "tank_history_flag": "clean"
+    },
+    "ai_draft_decision": "normal",
+    "ai_draft_reason_codes": [
+      "metric_level"
+    ],
+    "decision": "caution",
+    "reason_codes": [
+      "seasonality"
+    ],
+    "check_priority": [
+      "blend_ratio",
+      "retest",
+      "additive_dose"
+    ],
+    "risk_codes": [
+      "conditional_quality_risk"
+    ],
+    "rule_summary": "혹한기 주의 — 검사값 경계 근접 → 재확인 후 출하 결정",
+    "draft_pattern": "under",
+    "narrative": "케이스 DIESEL-E-030 — 혹한기 생산. 반제품 구성: LGO 0.48 / HGO 0.29 / LCO 0.12 / Kero 0.09 / Bio 0.03. 주요 검사값: 측정 CFPP -14.4°C, 목표 CFPP -10.9°C (마진 +3.5°C), n-파라핀 C16-20 7.5wt%, C21+ 2.17wt%, 밀도 15°C 841 kg/m³. 첨가제: A 타입 339ppm. 탱크 이력: clean. 베테랑 판단: 주의."
+  },
+  {
+    "case_id": "DIESEL-E-031",
+    "source_f_index": 180,
+    "context": {
+      "season": "deep_winter",
+      "blend_components": {
+        "lgo": 0.8001,
+        "hgo": 0.0268,
+        "lco": 0.094,
+        "kero": 0.0491,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -17.1,
+        "cp": -13.8,
+        "pp": -10.9,
+        "density_15c": 833.2,
+        "n_paraffin_c10_c15": 10.27,
+        "n_paraffin_c16_c20": 9.32,
+        "n_paraffin_c21_plus": 2.0,
+        "aromatic_content": 21.5,
+        "sulfur_ppm": 6.4,
+        "cetane_index": 50.8,
+        "wafi_type": "B",
+        "wafi_ppm": 395.0
+      },
+      "target_cfpp": -17.6,
+      "tank_history_flag": "clean"
+    },
+    "ai_draft_decision": "risk",
+    "ai_draft_reason_codes": [
+      "seasonality",
+      "metric_level"
+    ],
+    "decision": "risk",
+    "reason_codes": [
+      "seasonality",
+      "metric_level"
+    ],
+    "check_priority": [
+      "retest",
+      "blend_ratio",
+      "additive_dose"
+    ],
+    "risk_codes": [
+      "conditional_quality_risk",
+      "post_issue_possible"
+    ],
+    "rule_summary": "혹한기 위험 — CFPP 목표 미달 → WAFI 증량 또는 재블렌딩 필요",
+    "draft_pattern": "match",
+    "narrative": "케이스 DIESEL-E-031 — 혹한기 생산. 반제품 구성: LGO 0.80 / HGO 0.03 / LCO 0.09 / Kero 0.05 / Bio 0.03. 주요 검사값: 측정 CFPP -17.1°C, 목표 CFPP -17.6°C (마진 -0.5°C), n-파라핀 C16-20 9.3wt%, C21+ 2.00wt%, 밀도 15°C 833 kg/m³. 첨가제: B 타입 395ppm. 탱크 이력: clean. 베테랑 판단: 위험."
+  },
+  {
+    "case_id": "DIESEL-E-032",
+    "source_f_index": 428,
+    "context": {
+      "season": "deep_winter",
+      "blend_components": {
+        "lgo": 0.6315,
+        "hgo": 0.1842,
+        "lco": 0.1159,
+        "kero": 0.0384,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -11.6,
+        "cp": -8.1,
+        "pp": -5.9,
+        "density_15c": 840.7,
+        "n_paraffin_c10_c15": 9.03,
+        "n_paraffin_c16_c20": 8.89,
+        "n_paraffin_c21_plus": 2.69,
+        "aromatic_content": 27.6,
+        "sulfur_ppm": 5.6,
+        "cetane_index": 48.7,
+        "wafi_type": "B",
+        "wafi_ppm": 433.0
+      },
+      "target_cfpp": -15.5,
+      "tank_history_flag": "clean"
+    },
+    "ai_draft_decision": "risk",
+    "ai_draft_reason_codes": [
+      "seasonality",
+      "metric_level"
+    ],
+    "decision": "risk",
+    "reason_codes": [
+      "seasonality",
+      "metric_level"
+    ],
+    "check_priority": [
+      "blend_ratio",
+      "retest",
+      "additive_dose"
+    ],
+    "risk_codes": [
+      "conditional_quality_risk",
+      "post_issue_possible"
+    ],
+    "rule_summary": "혹한기 위험 — CFPP 목표 미달 → WAFI 증량 또는 재블렌딩 필요",
+    "draft_pattern": "match",
+    "narrative": "케이스 DIESEL-E-032 — 혹한기 생산. 반제품 구성: LGO 0.63 / HGO 0.18 / LCO 0.12 / Kero 0.04 / Bio 0.03. 주요 검사값: 측정 CFPP -11.6°C, 목표 CFPP -15.5°C (마진 -3.9°C), n-파라핀 C16-20 8.9wt%, C21+ 2.69wt%, 밀도 15°C 841 kg/m³. 첨가제: B 타입 433ppm. 탱크 이력: clean. 베테랑 판단: 위험."
+  },
+  {
+    "case_id": "DIESEL-E-033",
+    "source_f_index": 301,
+    "context": {
+      "season": "deep_winter",
+      "blend_components": {
+        "lgo": 0.5359,
+        "hgo": 0.2352,
+        "lco": 0.1784,
+        "kero": 0.0205,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -6.1,
+        "cp": -2.7,
+        "pp": 0.8,
+        "density_15c": 846.1,
+        "n_paraffin_c10_c15": 8.55,
+        "n_paraffin_c16_c20": 10.07,
+        "n_paraffin_c21_plus": 2.36,
+        "aromatic_content": 28.7,
+        "sulfur_ppm": 6.3,
+        "cetane_index": 47.6,
+        "wafi_type": "C",
+        "wafi_ppm": 219.0
+      },
+      "target_cfpp": -17.6,
+      "tank_history_flag": "recent_change"
+    },
+    "ai_draft_decision": "risk",
+    "ai_draft_reason_codes": [
+      "tank_history",
+      "blend_component"
+    ],
+    "decision": "risk",
+    "reason_codes": [
+      "tank_history",
+      "blend_component"
+    ],
+    "check_priority": [
+      "tank_history",
+      "blend_ratio",
+      "retest"
+    ],
+    "risk_codes": [
+      "conditional_quality_risk",
+      "historical_impact",
+      "post_issue_possible"
+    ],
+    "rule_summary": "혹한기 위험 — CFPP 목표 미달 → WAFI 증량 또는 재블렌딩 필요",
+    "draft_pattern": "match",
+    "narrative": "케이스 DIESEL-E-033 — 혹한기 생산. 반제품 구성: LGO 0.54 / HGO 0.24 / LCO 0.18 / Kero 0.02 / Bio 0.03. 주요 검사값: 측정 CFPP -6.1°C, 목표 CFPP -17.6°C (마진 -11.5°C), n-파라핀 C16-20 10.1wt%, C21+ 2.36wt%, 밀도 15°C 846 kg/m³. 첨가제: C 타입 219ppm. 탱크 이력: recent_change. 베테랑 판단: 위험."
+  },
+  {
+    "case_id": "DIESEL-E-034",
+    "source_f_index": 339,
+    "context": {
+      "season": "deep_winter",
+      "blend_components": {
+        "lgo": 0.6962,
+        "hgo": 0.2221,
+        "lco": 0.0474,
+        "kero": 0.0043,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -6.7,
+        "cp": -2.5,
+        "pp": -0.8,
+        "density_15c": 838.3,
+        "n_paraffin_c10_c15": 8.95,
+        "n_paraffin_c16_c20": 10.5,
+        "n_paraffin_c21_plus": 2.86,
+        "aromatic_content": 24.0,
+        "sulfur_ppm": 6.6,
+        "cetane_index": 51.5,
+        "wafi_type": "A",
+        "wafi_ppm": 244.0
+      },
+      "target_cfpp": -11.9,
+      "tank_history_flag": "mixed"
+    },
+    "ai_draft_decision": "caution",
+    "ai_draft_reason_codes": [
+      "tank_history",
+      "seasonality"
+    ],
+    "decision": "risk",
+    "reason_codes": [
+      "tank_history",
+      "seasonality"
+    ],
+    "check_priority": [
+      "tank_history",
+      "blend_ratio",
+      "retest"
+    ],
+    "risk_codes": [
+      "conditional_quality_risk",
+      "historical_impact",
+      "post_issue_possible"
+    ],
+    "rule_summary": "혹한기 위험 — CFPP 목표 미달 → WAFI 증량 또는 재블렌딩 필요",
+    "draft_pattern": "under",
+    "narrative": "케이스 DIESEL-E-034 — 혹한기 생산. 반제품 구성: LGO 0.70 / HGO 0.22 / LCO 0.05 / Kero 0.00 / Bio 0.03. 주요 검사값: 측정 CFPP -6.7°C, 목표 CFPP -11.9°C (마진 -5.2°C), n-파라핀 C16-20 10.5wt%, C21+ 2.86wt%, 밀도 15°C 838 kg/m³. 첨가제: A 타입 244ppm. 탱크 이력: mixed. 베테랑 판단: 위험."
+  },
+  {
+    "case_id": "DIESEL-E-035",
+    "source_f_index": 330,
+    "context": {
+      "season": "deep_winter",
+      "blend_components": {
+        "lgo": 0.744,
+        "hgo": 0.0733,
+        "lco": 0.1501,
+        "kero": 0.0025,
+        "biodiesel": 0.03
+      },
+      "key_metrics": {
+        "cfpp_measured": -10.4,
+        "cp": -6.4,
+        "pp": -3.0,
+        "density_15c": 844.3,
+        "n_paraffin_c10_c15": 9.45,
+        "n_paraffin_c16_c20": 9.87,
+        "n_paraffin_c21_plus": 1.94,
+        "aromatic_content": 26.1,
+        "sulfur_ppm": 5.3,
+        "cetane_index": 47.3,
+        "wafi_type": "A",
+        "wafi_ppm": 233.0
+      },
+      "target_cfpp": -13.8,
+      "tank_history_flag": "clean"
+    },
+    "ai_draft_decision": "caution",
+    "ai_draft_reason_codes": [
+      "blend_component",
+      "seasonality"
+    ],
+    "decision": "risk",
+    "reason_codes": [
+      "blend_component",
+      "seasonality"
+    ],
+    "check_priority": [
+      "blend_ratio",
+      "retest",
+      "additive_dose"
+    ],
+    "risk_codes": [
+      "conditional_quality_risk",
+      "post_issue_possible"
+    ],
+    "rule_summary": "혹한기 위험 — CFPP 목표 미달 → WAFI 증량 또는 재블렌딩 필요",
+    "draft_pattern": "under",
+    "narrative": "케이스 DIESEL-E-035 — 혹한기 생산. 반제품 구성: LGO 0.74 / HGO 0.07 / LCO 0.15 / Kero 0.00 / Bio 0.03. 주요 검사값: 측정 CFPP -10.4°C, 목표 CFPP -13.8°C (마진 -3.3°C), n-파라핀 C16-20 9.9wt%, C21+ 1.94wt%, 밀도 15°C 844 kg/m³. 첨가제: A 타입 233ppm. 탱크 이력: clean. 베테랑 판단: 위험."
+  }
+]

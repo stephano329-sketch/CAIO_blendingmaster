@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blending Master — 경유 저온성상 AI 의사결정 지원 시스템</title>
+
+<!-- Tabler Icons (위젯에서 쓰던 ti ti-* 아이콘들) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+
+<style>
+/* ─────────────── 디자인 토큰 (위젯 환경 변수 → 실제 값) ─────────────── */
+:root {
+  /* 폰트 */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, monospace;
+
+  /* 색상 */
+  --color-background-primary: #FFFFFF;
+  --color-background-secondary: #F7F6F1;
+  --color-text-primary: #1F1E1B;
+  --color-text-secondary: #756F61;
+  --color-border-tertiary: #E5E2D9;
+  --color-border-secondary: #C5C0B3;
+
+  /* 라운드 */
+  --border-radius-md: 6px;
+  --border-radius-lg: 10px;
+}
+
+/* ─────────────── 페이지 기본 ─────────────── */
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-background-secondary);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+}
+body {
+  min-height: 100vh;
+  padding: 16px;
+}
+.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
+
+/* ─────────────── 앱 레이아웃 ─────────────── */
+*{box-sizing:border-box;margin:0;padding:0}
+.bm-app{font-family:var(--font-sans);min-height:600px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;display:flex;flex-direction:column;background:var(--color-background-primary);max-width:1400px;margin:0 auto}
+.bm-header{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);padding:0 16px;display:flex;align-items:center;height:48px;gap:10px;flex-shrink:0}
+.bm-logo{width:26px;height:26px;border-radius:6px;background:#BA7517;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:500;font-size:13px;flex-shrink:0}
+.bm-title{font-size:14px;font-weight:500;color:var(--color-text-primary);flex:1}
+.bm-header-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.user-select-wrap{position:relative;display:flex;align-items:center}
+.user-avatar{width:26px;height:26px;border-radius:50%;background:#E6F1FB;border:0.5px solid #B5D4F4;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:#185FA5;flex-shrink:0;pointer-events:none;position:absolute;left:8px;z-index:1}
+.user-dropdown{appearance:none;-webkit-appearance:none;width:220px;padding:5px 28px 5px 38px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary);font-size:12px;font-family:var(--font-sans);cursor:pointer;outline:none;height:30px}
+.user-dropdown:focus{border-color:#BA7517}
+.user-chevron{position:absolute;right:8px;pointer-events:none;color:var(--color-text-secondary);font-size:12px}
+.bm-settings-btn{padding:5px 8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:transparent;cursor:pointer;color:var(--color-text-secondary);font-size:14px}
+.bm-layout{display:flex;flex:1;min-height:0}
+.bm-sidebar{width:180px;background:var(--color-background-primary);border-right:0.5px solid var(--color-border-tertiary);display:flex;flex-direction:column;padding:12px 8px;gap:2px;flex-shrink:0}
+.bm-nav-btn{display:flex;align-items:center;gap:10px;padding:9px 12px;border:none;background:transparent;cursor:pointer;font-size:13px;color:var(--color-text-secondary);font-family:var(--font-sans);border-radius:var(--border-radius-md);text-align:left;width:100%;transition:background 0.15s,color 0.15s}
+.bm-nav-btn:hover:not(.active){background:var(--color-background-secondary)}
+.bm-nav-btn.active{background:#FAEEDA;color:#BA7517;font-weight:500}
+.bm-nav-btn i{font-size:16px;color:var(--color-text-secondary);flex-shrink:0}
+.bm-nav-btn.active i{color:#BA7517}
+.bm-body{flex:1;padding:20px;background:var(--color-background-secondary);overflow-y:auto}
+
+/* ─────────────── 대시보드 ─────────────── */
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.stat-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:14px}
+.stat-label{font-size:11px;color:var(--color-text-secondary);margin-bottom:6px}
+.stat-val{font-size:22px;font-weight:500;color:var(--color-text-primary);font-family:var(--font-mono)}
+.stat-unit{font-size:12px;color:var(--color-text-secondary);font-weight:400;margin-left:2px}
+.stat-card.accent{border-color:#BA7517;background:#FAEEDA}
+.stat-card.accent .stat-val{color:#BA7517}
+
+.btn-primary{padding:8px 16px;background:#BA7517;color:#fff;border:none;border-radius:var(--border-radius-md);cursor:pointer;font-size:13px;font-family:var(--font-sans);font-weight:500}
+.btn-secondary{padding:8px 16px;background:transparent;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);cursor:pointer;font-size:13px;color:var(--color-text-primary);font-family:var(--font-sans)}
+
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.card-header{padding:12px 16px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.card-sub{font-size:11px;color:var(--color-text-secondary)}
+
+.log-table{width:100%;border-collapse:collapse;table-layout:fixed}
+.log-table th{padding:8px 14px;text-align:left;font-size:11px;font-weight:500;color:var(--color-text-secondary);background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary);white-space:nowrap}
+.log-table td{padding:10px 14px;font-size:12px;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:middle}
+.log-table tr:last-child td{border-bottom:none}
+.log-table th.group-head{border-left:2px solid var(--color-border-secondary)}
+.log-table td.group-cell{border-left:2px solid var(--color-border-tertiary)}
+.col-date{width:72px}.col-batch{width:80px}.col-pred{width:80px}.col-wafi-s{width:80px}.col-actual-cfpp{width:90px}.col-actual-wafi{width:90px}
+
+.mono{font-family:var(--font-mono)}
+.c-amber{color:#BA7517}.c-blue{color:#185FA5}.c-muted{color:var(--color-text-secondary)}
+.delta-up{color:#A32D2D;font-size:10px}.delta-ok{color:#3B6D11;font-size:10px}
+
+.badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:500;font-family:var(--font-mono)}
+.badge-normal{background:#EAF3DE;color:#3B6D11;border:0.5px solid #97C459}
+.badge-caution{background:#FAEEDA;color:#854F0B;border:0.5px solid #EF9F27}
+.badge-risk{background:#FCEBEB;color:#A32D2D;border:0.5px solid #F09595}
+
+/* ─────────────── 신규 판단 ─────────────── */
+.judg-two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch}
+.judg-col{display:flex;flex-direction:column}
+.form-section{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px}
+.form-section.stretch{flex:1;display:flex;flex-direction:column}
+.form-section.stretch .fields-wrap{flex:1}
+.form-section-title{font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:14px;padding-bottom:10px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:11px;color:var(--color-text-secondary);margin-bottom:5px}
+.field input,.field select{width:100%;padding:7px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary);font-size:13px;font-family:var(--font-mono);outline:none}
+.field select{font-family:var(--font-sans)}
+.blend-total{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:8px 10px;border-radius:var(--border-radius-md);background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary)}
+.blend-total-label{font-size:11px;color:var(--color-text-secondary)}
+.blend-total-val{font-family:var(--font-mono);font-size:13px;font-weight:500}
+.blend-ok{color:#3B6D11}.blend-warn{color:#A32D2D}
+
+.pred-cfpp-banner{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);margin-bottom:12px}
+.pred-cfpp-label{font-size:12px;color:var(--color-text-secondary)}
+.pred-cfpp-val{font-family:var(--font-mono);font-size:16px;font-weight:500;color:#185FA5}
+.scen-section-label{font-size:11px;color:var(--color-text-secondary);margin-bottom:10px;letter-spacing:0.05em}
+.scen-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.scen-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px;position:relative}
+.scen-card.rec{border-color:#BA7517;border-width:1.5px}
+.scen-type{font-size:11px;font-weight:500;margin-bottom:8px}
+.scen-wafi{font-family:var(--font-mono);font-size:24px;font-weight:500;color:var(--color-text-primary)}
+.scen-unit{font-size:12px;color:var(--color-text-secondary);font-weight:400}
+.scen-cfpp{font-size:12px;color:var(--color-text-secondary);margin:4px 0 10px}
+.conf-bar-bg{height:3px;background:var(--color-border-tertiary);border-radius:2px}
+.conf-bar{height:3px;border-radius:2px}
+.rec-badge{position:absolute;top:-9px;left:10px;background:#BA7517;color:#fff;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:500}
+.judge-header{display:flex;align-items:flex-start;gap:12px;padding:14px 16px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.bottom-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+/* ─────────────── 지식 추출 ─────────────── */
+.iv-layout{display:flex;flex-direction:column;gap:14px}
+.iv-top{display:flex;gap:14px;align-items:stretch}
+.iv-case-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px;flex:1;min-width:0}
+.iv-progress-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px;width:160px;flex-shrink:0;display:flex;flex-direction:column}
+.iv-progress-items{display:flex;flex-direction:column;gap:0;flex:1;justify-content:space-between}
+.iv-q-list{display:flex;flex-direction:column;gap:10px}
+.iv-q-block{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px}
+.iv-actions{display:flex;justify-content:space-between;align-items:center}
+.case-meta{display:flex;justify-content:space-between;margin-bottom:14px;padding-bottom:10px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.comp-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.comp-item .comp-label{font-size:10px;color:var(--color-text-secondary)}
+.comp-item .comp-val{font-family:var(--font-mono);font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.metrics-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px;padding-top:12px;border-top:0.5px solid var(--color-border-tertiary)}
+.metric-item .m-label{font-size:10px;color:var(--color-text-secondary)}
+.metric-item .m-val{font-family:var(--font-mono);font-size:16px;font-weight:500}
+.ai-draft-box{background:#FAEEDA;border:0.5px solid #EF9F27;border-radius:var(--border-radius-md);padding:10px 14px;margin-top:12px}
+.q-section-title{font-size:10px;color:var(--color-text-secondary);letter-spacing:0.06em;margin-bottom:10px;text-transform:uppercase}
+.opt-group{display:flex;flex-wrap:wrap;gap:8px}
+.opt-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:var(--border-radius-md);cursor:pointer;font-size:12px;font-weight:400;background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);color:var(--color-text-secondary);font-family:var(--font-sans);transition:all 0.15s}
+.opt-btn:hover{background:var(--color-background-primary)}
+.opt-btn.sel-normal{background:#F4FBE8;border:1.5px solid #7BC23A;color:#2A5A08;font-weight:600}
+.opt-btn.sel-caution{background:#FFF7EC;border:1.5px solid #E89B2A;color:#7A4710;font-weight:600}
+.opt-btn.sel-risk{background:#FFF3F3;border:1.5px solid #E06060;color:#7A1A1A;font-weight:600}
+.opt-btn.sel-default{background:#EEF6FD;border:1.5px solid #4A9AD4;color:#0A3E72;font-weight:600}
+.q5-textarea{width:100%;padding:8px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary);font-size:12px;font-family:var(--font-sans);resize:none;outline:none;min-height:56px}
+
+/* ─────────────── AI 상담 ─────────────── */
+.chat-layout{display:flex;flex-direction:column;gap:12px}
+.context-bar{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 14px;display:flex;align-items:center;gap:10px;font-size:12px}
+.ctx-batch{font-family:var(--font-mono);color:#185FA5;font-size:12px}
+.ctx-right{margin-left:auto;color:var(--color-text-secondary);font-size:11px}
+.chat-messages{min-height:200px;display:flex;flex-direction:column;gap:10px}
+.suggestion-list{display:flex;flex-direction:column;gap:6px}
+.suggestion-btn{text-align:left;padding:10px 14px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);cursor:pointer;font-size:13px;color:var(--color-text-secondary);font-family:var(--font-sans);width:100%}
+.suggestion-btn:hover{background:var(--color-background-secondary)}
+.msg-user{display:flex;justify-content:flex-end}
+.msg-user .bubble{background:#FAEEDA;border:0.5px solid #EF9F27;border-radius:var(--border-radius-md);padding:10px 14px;max-width:80%;font-size:13px;color:#412402}
+.msg-ai .bubble{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 14px;max-width:90%;font-size:13px;color:var(--color-text-primary);line-height:1.6}
+.source-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.src-tag{display:flex;align-items:center;gap:5px;padding:3px 8px;border:0.5px solid var(--color-border-tertiary);border-radius:4px;background:var(--color-background-secondary)}
+.src-type{font-size:9px;font-weight:500;padding:1px 5px;border-radius:3px}
+.src-case{background:#E6F1FB;color:#0C447C}.src-rule{background:#FAEEDA;color:#633806}.src-doc{background:#EAF3DE;color:#27500A}
+.src-id{font-family:var(--font-mono);font-size:11px;color:var(--color-text-secondary)}
+.src-desc{font-size:11px;color:var(--color-text-secondary)}
+.chat-input-row{display:flex;gap:8px}
+.chat-input-row input{flex:1;padding:9px 12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary);font-size:13px;font-family:var(--font-sans);outline:none}
+
+.priority-items{display:flex;flex-direction:column;gap:8px}
+.priority-item{display:flex;align-items:center;gap:10px}
+.priority-num{width:22px;height:22px;border-radius:50%;background:#FAEEDA;border:0.5px solid #EF9F27;color:#854F0B;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.priority-text{font-size:12px;color:var(--color-text-secondary)}
+.similar-list{display:flex;flex-direction:column}
+.similar-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.similar-row:last-child{border-bottom:none}
+.similar-left{display:flex;align-items:center;gap:8px}
+.similar-right{display:flex;align-items:center;gap:8px}
+.case-id{font-family:var(--font-mono);font-size:11px;color:#185FA5}
+.wafi-val{font-family:var(--font-mono);font-size:12px;color:#BA7517}
+.sim-pct{font-size:11px;color:var(--color-text-secondary)}
+.loading-spinner{display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;gap:12px}
+.spinner{width:36px;height:36px;border:2px solid var(--color-border-tertiary);border-top-color:#BA7517;border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.saved-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:300px;gap:12px}
+
+/* ─────────────── 경험칙 DB ─────────────── */
+.kb-stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+.kb-filter-bar{display:flex;gap:10px;align-items:center;margin-bottom:16px;padding:10px 14px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);flex-wrap:wrap}
+.kb-filter-label{font-size:11px;color:var(--color-text-secondary)}
+.kb-filter-chip{padding:4px 10px;border:0.5px solid var(--color-border-secondary);border-radius:14px;background:var(--color-background-secondary);font-size:11px;color:var(--color-text-secondary);cursor:pointer;font-family:var(--font-sans)}
+.kb-filter-chip.active{background:#FAEEDA;border-color:#BA7517;color:#854F0B;font-weight:500}
+.kb-search{flex:1;min-width:200px;padding:6px 10px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);font-size:12px;font-family:var(--font-sans);outline:none}
+.kb-search:focus{border-color:#BA7517}
+.kb-count{font-size:11px;color:var(--color-text-secondary);font-family:var(--font-mono)}
+
+.kb-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-left-width:3px;border-radius:var(--border-radius-lg);overflow:hidden;margin-bottom:10px}
+.kb-card.kb-normal{border-left-color:#7BC23A}
+.kb-card.kb-caution{border-left-color:#E89B2A}
+.kb-card.kb-risk{border-left-color:#E06060}
+.kb-card-head{padding:12px 16px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.kb-card-id{font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--color-text-primary)}
+.kb-card-meta{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:11px;color:var(--color-text-secondary)}
+.kb-author{display:inline-flex;align-items:center;gap:5px}
+.kb-author-avatar{width:18px;height:18px;border-radius:50%;background:#E6F1FB;border:0.5px solid #B5D4F4;color:#185FA5;font-size:9px;font-weight:600;display:flex;align-items:center;justify-content:center}
+
+.kb-card-body{padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+.kb-section{display:grid;grid-template-columns:90px 1fr;gap:12px;align-items:flex-start}
+.kb-section-label{font-size:10px;color:var(--color-text-secondary);letter-spacing:0.05em;padding-top:3px;text-transform:uppercase}
+.kb-section-body{font-size:12px;color:var(--color-text-primary)}
+.kb-comp-line{display:flex;gap:10px;flex-wrap:wrap;font-family:var(--font-mono);font-size:12px}
+.kb-comp-line span{color:var(--color-text-primary)}
+.kb-metrics-line{display:flex;gap:14px;font-family:var(--font-mono);font-size:11px;color:var(--color-text-secondary);margin-top:4px}
+.kb-metrics-line .v{font-weight:500;color:var(--color-text-primary)}
+.kb-tag-list{display:flex;flex-wrap:wrap;gap:5px}
+.kb-tag{display:inline-flex;align-items:center;padding:3px 9px;border-radius:12px;background:#EEF6FD;border:0.5px solid #B5D4F4;color:#0A3E72;font-size:11px}
+.kb-tag.risk{background:#FFF3F3;border-color:#F4B5B5;color:#7A1A1A}
+.kb-prio{display:flex;flex-direction:column;gap:5px}
+.kb-prio-row{display:flex;align-items:center;gap:8px;font-size:12px}
+.kb-prio-num{width:18px;height:18px;border-radius:50%;background:#FAEEDA;border:0.5px solid #EF9F27;color:#854F0B;font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.kb-memo{font-size:12px;color:var(--color-text-primary);font-style:italic;padding:8px 12px;background:var(--color-background-secondary);border-left:2px solid #BA7517;border-radius:4px;line-height:1.5}
+.kb-empty{padding:60px 20px;text-align:center;color:var(--color-text-secondary);font-size:13px}
+</style>
+</head>
+<body>
+
+<h2 class="sr-only">Blending Master — 경유 저온성상 AI 의사결정 지원 시스템</h2>
+<div class="bm-app" id="app"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   Blending Master — Standalone Demo (v1.0)
+   PRD: 경유 저온성상 AI 의사결정 지원 시스템
+   ═══════════════════════════════════════════════════════════ */
+
+const USERS = [
+  { value: 'junior',  label: '김 연구원', initials: '김' },
+  { value: 'veteran', label: '이 부장',   initials: '이' },
+];
+
+const NAV = [
+  { id: 'dashboard', label: '대시보드',   icon: 'ti-layout-dashboard' },
+  { id: 'judgment',  label: '신규 판단',  icon: 'ti-clipboard-check' },
+  { id: 'consult',   label: 'AI 상담',    icon: 'ti-message-dots' },
+  { id: 'interview', label: '지식 추출',  icon: 'ti-user-question' },
+  { id: 'kb',        label: '경험칙 DB',  icon: 'ti-database' },
+];
+
+/* 코드 → 라벨 매핑 */
+const Q2_LABELS = { metric_level:'검사값 절대 수준', blend_component:'반제품 구성', tank_history:'탱크 이력', seasonality:'계절 영향', additive:'첨가제 영향', other:'기타' };
+const Q3_LABELS = { retest:'검사 재확인', tank_history:'탱크 이력', blend_ratio:'반제품 비율', additive_dose:'첨가제 투입량', process_condition:'공정 조건' };
+const Q4_LABELS = { within_spec:'기준내 위험 가능', historical:'이력 영향', post_issue:'출하 후 문제', conditional:'조건부 품질 악화' };
+const JUDGE_LABELS = { normal:'정상', caution:'주의', risk:'위험' };
+
+/* 초기 샘플 경험칙 데이터 */
+const initialKB = [
+  { id:'KB-0003', caseId:'CASE-SYN-0023', season:'혹한기',
+    comps:{LGO:'35%',HGO:'25%',LCO:'30%',Kero:'10%'}, cfpp:-16,cp:-8,pp:-10,
+    aiDraft:'caution', q1:'caution',
+    q2:['blend_component','tank_history'],
+    q3:['tank_history','blend_ratio','retest'],
+    q4:['within_spec','conditional'],
+    q5:'LCO 25% 초과 + 혹한기 조합에서는 탱크 잔류물 영향까지 함께 확인 필요. WAFI 단독으로 해결 어려움.',
+    author:'veteran', savedAt:'2026-05-18 16:42' },
+  { id:'KB-0002', caseId:'CASE-SYN-0019', season:'동절기',
+    comps:{LGO:'25%',HGO:'30%',LCO:'35%',Kero:'10%'}, cfpp:-12,cp:-6,pp:-9,
+    aiDraft:'risk', q1:'risk',
+    q2:['blend_component','additive'],
+    q3:['blend_ratio','additive_dose','retest'],
+    q4:['post_issue','within_spec'],
+    q5:'LCO 30% 이상이면 WAFI 효과 둔화. CP-CFPP 갭이 좁으면 출하 후 동결 위험 큼.',
+    author:'veteran', savedAt:'2026-05-17 11:20' },
+  { id:'KB-0001', caseId:'CASE-SYN-0015', season:'동절기',
+    comps:{LGO:'45%',HGO:'30%',LCO:'15%',Kero:'10%'}, cfpp:-14,cp:-10,pp:-12,
+    aiDraft:'normal', q1:'normal',
+    q2:['metric_level'], q3:['retest'], q4:[],
+    q5:'파라핀 계열 위주 + LCO 15% 이하 조건. 표준 WAFI 투입 범위로 충분.',
+    author:'junior', savedAt:'2026-05-16 09:08' },
+];
+
+const state = {
+  tab: 'dashboard',
+  user: 'junior',
+  judgStep: 'input',
+  predictedCfpp: -14.2,
+  interviewAnswers: { q1: null, q2: [], q3: [], q4: [], q5: '' },
+  interviewSaved: false,
+  chatMessages: [],
+  chatLoading: false,
+  form: { lgo:40, hgo:30, lco:20, kero:10, bio:0, cp:-8, pp:-10, density:0.845, targetCfpp:-21, priority:'balanced' },
+  knowledgeDB: [...initialKB],
+  kbFilter: 'all',
+  kbSearch: '',
+};
+
+const logs = [
+  { date:'05-17', id:'D-2104', predCfpp:-14.2, wafiSug:240, actualCfpp:-14.0, actualWafi:240 },
+  { date:'05-16', id:'D-2103', predCfpp:-12.5, wafiSug:150, actualCfpp:-12.8, actualWafi:150 },
+  { date:'05-15', id:'D-2102', predCfpp:-17.8, wafiSug:380, actualCfpp:-16.1, actualWafi:400 },
+  { date:'05-14', id:'D-2101', predCfpp:-11.3, wafiSug:120, actualCfpp:-11.5, actualWafi:120 },
+];
+
+/* ─────────────── 유틸 ─────────────── */
+function badge(s){const m={normal:['badge-normal','정상'],caution:['badge-caution','주의'],risk:['badge-risk','위험']};const[cls,lbl]=m[s]||m.normal;return`<span class="badge ${cls}">${lbl}</span>`;}
+function cu(){return USERS.find(u=>u.value===state.user);}
+function userLabel(v){const u=USERS.find(x=>x.value===v);return u?u.label:v;}
+function userInitial(v){const u=USERS.find(x=>x.value===v);return u?u.initials:'?';}
+function delta(pred,actual){const d=(actual-pred).toFixed(1);const sign=d>0?'+':'';return`<span class="${Math.abs(d)<=1?'delta-ok':'delta-up'}">${sign}${d}</span>`;}
+function blendTotal(){const f=state.form;return(+f.lgo||0)+(+f.hgo||0)+(+f.lco||0)+(+f.kero||0)+(+f.bio||0);}
+function nowStr(){const d=new Date();const pad=n=>String(n).padStart(2,'0');return`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;}
+
+/* ─────────────── 사이드바 / 헤더 ─────────────── */
+function renderSidebar(){return`<nav class="bm-sidebar">${NAV.map(n=>`<button class="bm-nav-btn ${state.tab===n.id?'active':''}" onclick="navigate('${n.id}')"><i class="ti ${n.icon}"></i>${n.label}</button>`).join('')}</nav>`;}
+
+function renderHeader(){const u=cu();return`<div class="bm-header">
+  <div class="bm-logo">B</div><div class="bm-title">Blending Master</div>
+  <div class="bm-header-right">
+    <div class="user-select-wrap">
+      <div class="user-avatar">${u.initials}</div>
+      <select class="user-dropdown" onchange="state.user=this.value;render()">
+        ${USERS.map(u=>`<option value="${u.value}" ${state.user===u.value?'selected':''}>${u.label}</option>`).join('')}
+      </select>
+      <i class="ti ti-chevron-down user-chevron"></i>
+    </div>
+    <button class="bm-settings-btn"><i class="ti ti-settings"></i></button>
+  </div>
+</div>`;}
+
+/* ─────────────── 대시보드 ─────────────── */
+function renderDashboard(){return`
+  <div class="stat-grid">
+    <div class="stat-card accent"><div class="stat-label">오늘 처리할 Batch</div><div class="stat-val">3<span class="stat-unit">건</span></div></div>
+    <div class="stat-card"><div class="stat-label">이번 달 판단</div><div class="stat-val">47<span class="stat-unit">건</span></div></div>
+    <div class="stat-card accent"><div class="stat-label">이번 달 절감액(추정)</div><div class="stat-val">1,234<span class="stat-unit">만원</span></div></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">최근 의사결정 로그</span><span class="card-sub">최근 4건</span></div>
+    <div style="overflow-x:auto"><table class="log-table">
+      <thead><tr>
+        <th class="col-date">날짜</th><th class="col-batch">Batch ID</th>
+        <th class="col-pred">예측 CFPP</th><th class="col-wafi-s">WAFI 제안</th>
+        <th class="col-actual-cfpp group-head">결과 — 실측 CFPP</th>
+        <th class="col-actual-wafi group-head">결과 — WAFI 투입</th>
+      </tr></thead>
+      <tbody>${logs.map(l=>`<tr>
+        <td class="c-muted">${'2026-'+l.date}</td>
+        <td class="mono" style="color:var(--color-text-primary)">${l.id}</td>
+        <td class="mono c-blue">${l.predCfpp}°C</td>
+        <td class="mono c-amber">${l.wafiSug} ppm</td>
+        <td class="mono group-cell" style="color:var(--color-text-primary)">${l.actualCfpp}°C&nbsp;${delta(l.predCfpp,l.actualCfpp)}</td>
+        <td class="mono group-cell c-amber">${l.actualWafi} ppm${l.actualWafi!==l.wafiSug?`&nbsp;<span style="font-size:10px;color:var(--color-text-secondary)">(${l.actualWafi>l.wafiSug?'+':''}${l.actualWafi-l.wafiSug})</span>`:''}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>
+  </div>`;}
+
+/* ─────────────── 신규 판단 ─────────────── */
+function renderJudgmentInput(){
+  const s=state.form;const total=blendTotal();const ok=total===100;
+  return`<div class="judg-two-col">
+    <div class="judg-col"><div class="form-section stretch">
+      <div class="form-section-title">반제품 구성</div>
+      <div class="fields-wrap">
+        ${[['lgo','LGO (경질 경유)','%'],['hgo','HGO (중질 경유)','%'],['lco','LCO (접촉분해 경유)','%'],['kero','케로신','%'],['bio','바이오디젤','%']].map(([k,l,u])=>`
+          <div class="field"><label>${l} <span style="color:var(--color-text-secondary)">(${u})</span></label>
+          <input type="number" value="${s[k]}" oninput="updateForm('${k}',this.value);renderBlendTotal()"></div>`).join('')}
+      </div>
+      <div class="blend-total" id="blend-total-row">
+        <span class="blend-total-label">합계</span>
+        <span class="blend-total-val ${ok?'blend-ok':'blend-warn'}" id="blend-total-val">${total} %${ok?' ✓':' ← 100%가 되어야 합니다'}</span>
+      </div>
+    </div></div>
+    <div class="judg-col">
+      <div class="form-section">
+        <div class="form-section-title">주요 성상</div>
+        ${[['cp','Cloud Point','°C'],['pp','Pour Point','°C'],['density','밀도 (15°C)','g/cm³']].map(([k,l,u])=>`
+          <div class="field"><label>${l} <span style="color:var(--color-text-secondary)">(${u})</span></label>
+          <input type="number" value="${s[k]}" onchange="updateForm('${k}',this.value)"></div>`).join('')}
+      </div>
+      <div class="form-section" style="margin-top:12px">
+        <div class="form-section-title">판단 조건</div>
+        <div class="field"><label>목표 CFPP <span style="color:var(--color-text-secondary)">(°C)</span></label>
+          <input type="number" value="${s.targetCfpp}" onchange="updateForm('targetCfpp',this.value)"></div>
+        <div class="field"><label>최적화 우선순위</label>
+          <select onchange="updateForm('priority',this.value)">
+            <option value="cost" ${s.priority==='cost'?'selected':''}>비용 최소</option>
+            <option value="balanced" ${s.priority==='balanced'?'selected':''}>균형</option>
+            <option value="safe" ${s.priority==='safe'?'selected':''}>안전 우선</option>
+          </select></div>
+      </div>
+    </div>
+  </div>
+  <div class="bottom-actions" style="justify-content:flex-end">
+    <button class="btn-secondary">초기화</button>
+    <button class="btn-primary" onclick="requestJudgment()">AI 판단 요청 →</button>
+  </div>`;}
+
+function renderBlendTotal(){
+  const total=blendTotal();const ok=total===100;
+  const el=document.getElementById('blend-total-val');
+  if(el){el.className='blend-total-val '+(ok?'blend-ok':'blend-warn');
+    el.textContent=total+' %'+(ok?' ✓':' ← 100%가 되어야 합니다');}}
+
+function renderJudgmentLoading(){return`<div class="loading-spinner"><div class="spinner"></div>
+  <div style="font-size:14px;color:var(--color-text-secondary)">AI 판단 분석 중...</div>
+  <div style="font-size:12px;color:var(--color-text-secondary)">XGBoost 예측 + RAG 검색 + 경험칙 매칭</div></div>`;}
+
+function renderJudgmentResult(){
+  const predCfpp=state.predictedCfpp;
+  const scens=[
+    {type:'비용 최소',wafi:180,cfpp:-15.8,conf:72,color:'#185FA5'},
+    {type:'균형 (권장)',wafi:240,cfpp:-16.4,conf:88,color:'#BA7517',rec:true},
+    {type:'안전 우선',wafi:320,cfpp:-17.2,conf:94,color:'#3B6D11'},
+  ];
+  return`
+    <div class="card" style="margin-bottom:14px"><div class="judge-header">
+      <i class="ti ti-alert-triangle" style="font-size:24px;color:#BA7517;margin-top:3px"></i>
+      <div>
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:5px">
+          ${badge('caution')}<span style="font-size:15px;font-weight:500;color:var(--color-text-primary)">주의 판단</span>
+          <span style="font-size:11px;color:var(--color-text-secondary)">신뢰도 88%</span>
+        </div>
+        <div style="font-size:13px;color:var(--color-text-secondary)">LCO 비율 증가로 저온성상 악화 가능성. 탱크 이력 재확인 권고.</div>
+      </div>
+    </div></div>
+    <div class="pred-cfpp-banner">
+      <i class="ti ti-temperature" style="font-size:16px;color:#185FA5;flex-shrink:0"></i>
+      <span class="pred-cfpp-label">현재 Batch의 예측 CFPP</span>
+      <span style="font-size:12px;color:var(--color-text-secondary);margin:0 2px">:</span>
+      <span class="pred-cfpp-val">${predCfpp}°C</span>
+    </div>
+    <div class="scen-section-label">WAFI 추천 시나리오</div>
+    <div class="scen-grid">${scens.map(sc=>`
+      <div class="scen-card ${sc.rec?'rec':''}">
+        ${sc.rec?'<span class="rec-badge">추천</span>':''}
+        <div class="scen-type" style="color:${sc.color}">${sc.type}</div>
+        <div class="scen-wafi">${sc.wafi}<span class="scen-unit">ppm</span></div>
+        <div class="scen-cfpp">예상 CFPP: <span style="font-family:var(--font-mono);color:${sc.color}">${sc.cfpp}°C</span></div>
+        <div class="conf-bar-bg"><div class="conf-bar" style="width:${sc.conf}%;background:${sc.color}"></div></div>
+        <div style="font-size:11px;color:var(--color-text-secondary);margin-top:4px;text-align:right">${sc.conf}%</div>
+      </div>`).join('')}</div>
+    <div class="two-col">
+      <div class="card"><div class="card-header"><span class="card-title">확인 우선순위</span></div>
+        <div style="padding:14px"><div class="priority-items">
+          ${['탱크 이력 확인 (잔류물 위험)','LCO 비율 재검증','CFPP 재측정 권고'].map((p,i)=>`
+            <div class="priority-item"><div class="priority-num">${i+1}</div><div class="priority-text">${p}</div></div>`).join('')}
+        </div></div></div>
+      <div class="card"><div class="card-header"><span class="card-title">유사 사례 Top 3</span></div>
+        <div style="padding:14px"><div class="similar-list">
+          ${[['CASE-0089','caution',230,94],['CASE-0067','caution',250,87],['CASE-0041','normal',190,81]].map(([id,st,w,sim])=>`
+            <div class="similar-row">
+              <div class="similar-left"><span class="case-id">${id}</span>${badge(st)}</div>
+              <div class="similar-right"><span class="wafi-val">${w}ppm</span><span class="sim-pct">${sim}%</span></div>
+            </div>`).join('')}
+        </div></div></div>
+    </div>
+    <div class="bottom-actions">
+      <button class="btn-secondary" onclick="state.judgStep='input';render()">← 다시 입력</button>
+      <button class="btn-primary">균형 시나리오 채택</button>
+      <button class="btn-secondary" style="color:#185FA5;border-color:#B5D4F4" onclick="navigate('consult')">AI 상담 요청</button>
+    </div>`;}
+
+function renderJudgment(){
+  if(state.judgStep==='input') return renderJudgmentInput();
+  if(state.judgStep==='loading') return renderJudgmentLoading();
+  return renderJudgmentResult();}
+
+/* ─────────────── 지식 추출 ─────────────── */
+const ivCase = { id:'CASE-SYN-0023', season:'혹한기', comps:{LGO:'35%',HGO:'25%',LCO:'30%',Kero:'10%'}, cfpp:-16, cp:-8, pp:-10 };
+const q2opts = [['metric_level','검사값 절대 수준'],['blend_component','반제품 구성'],['tank_history','탱크 이력'],['seasonality','계절 영향'],['additive','첨가제 영향'],['other','기타']];
+const q3opts = [['retest','검사 재확인'],['tank_history','탱크 이력'],['blend_ratio','반제품 비율'],['additive_dose','첨가제 투입량'],['process_condition','공정 조건']];
+const q4opts = [['within_spec','기준내 위험 가능'],['historical','이력 영향'],['post_issue','출하 후 문제'],['conditional','조건부 품질 악화']];
+
+function renderInterview(){
+  if(state.interviewSaved) return`<div class="saved-screen">
+    <i class="ti ti-check" style="font-size:48px;color:#3B6D11"></i>
+    <div style="font-size:16px;font-weight:500;color:#3B6D11">경험칙 저장 완료</div>
+    <div style="font-size:13px;color:var(--color-text-secondary)">JSON + 벡터 텍스트로 경험칙 DB에 저장되었습니다.</div>
+    <div style="display:flex;gap:10px;margin-top:8px">
+      <button class="btn-secondary" onclick="navigate('kb')">경험칙 DB 확인</button>
+      <button class="btn-primary" onclick="resetInterview()">다음 케이스 →</button>
+    </div>
+  </div>`;
+  const a=state.interviewAnswers;
+  const qLabels=['Q1. 판단','Q2. 근거','Q3. 우선순위','Q4. 리스크','Q5. 메모'];
+  function optBtn(key,val,label,max,selClass){
+    const isArr=Array.isArray(a[key]);
+    const sel=isArr?a[key].includes(val):a[key]===val;
+    const cls=sel?(selClass||(val==='normal'?'sel-normal':val==='caution'?'sel-caution':val==='risk'?'sel-risk':'sel-default')):'';
+    const check=sel?`<i class="ti ti-check" style="font-size:11px"></i>`:'';
+    return`<button class="opt-btn ${cls}" onclick="toggleAnswer('${key}','${val}',${max||1})">${check}${label}</button>`;}
+
+  return`<div class="iv-layout">
+    <div class="iv-top">
+      <div class="iv-case-card">
+        <div class="case-meta">
+          <span style="font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--color-text-primary)">${ivCase.id}</span>
+          <span style="font-size:11px;color:var(--color-text-secondary)">${ivCase.season}</span>
+        </div>
+        <div class="comp-grid">${Object.entries(ivCase.comps).map(([k,v])=>`<div class="comp-item"><div class="comp-label">${k}</div><div class="comp-val">${v}</div></div>`).join('')}</div>
+        <div class="metrics-row">
+          <div class="metric-item"><div class="m-label">CFPP</div><div class="m-val" style="color:#854F0B">${ivCase.cfpp}°C</div></div>
+          <div class="metric-item"><div class="m-label">CP</div><div class="m-val" style="color:#185FA5">${ivCase.cp}°C</div></div>
+          <div class="metric-item"><div class="m-label">PP</div><div class="m-val" style="color:#185FA5">${ivCase.pp}°C</div></div>
+        </div>
+        <div class="ai-draft-box">
+          <div style="font-size:10px;color:var(--color-text-secondary);margin-bottom:5px">AI 초안 판단</div>
+          <div style="display:flex;align-items:center;gap:8px">${badge('caution')}
+            <span style="font-size:12px;color:var(--color-text-secondary)">LCO 과다·탱크 이력 기반 주의 추정</span>
+          </div>
+        </div>
+      </div>
+      <div class="iv-progress-card">
+        <div style="font-size:11px;font-weight:500;color:var(--color-text-primary);margin-bottom:12px;padding-bottom:10px;border-bottom:0.5px solid var(--color-border-tertiary)">진행 상태</div>
+        <div class="iv-progress-items">
+          ${['q1','q2','q3','q4','q5'].map((q,i)=>{
+            const done=(i===0&&a.q1)||(i===1&&a.q2.length)||(i===2&&a.q3.length)||(i===3&&a.q4.length)||(i===4&&a.q5);
+            return`<div style="display:flex;align-items:center;gap:9px">
+              <div style="width:20px;height:20px;border-radius:50%;border:0.5px solid ${done?'#BA7517':'var(--color-border-secondary)'};background:${done?'#BA7517':'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                ${done?`<i class="ti ti-check" style="font-size:10px;color:#fff"></i>`:`<span style="font-size:10px;color:var(--color-text-secondary);font-weight:500">${i+1}</span>`}
+              </div>
+              <span style="font-size:12px;color:${done?'var(--color-text-primary)':'var(--color-text-secondary)'};font-weight:${done?'500':'400'}">${qLabels[i]}</span>
+            </div>`;}).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="iv-q-list">
+      <div class="iv-q-block">
+        <div class="q-section-title">Q1. 판단</div>
+        <div class="opt-group">
+          ${optBtn('q1','normal','정상',1,'sel-normal')}
+          ${optBtn('q1','caution','주의',1,'sel-caution')}
+          ${optBtn('q1','risk','위험',1,'sel-risk')}
+        </div>
+      </div>
+      <div class="iv-q-block">
+        <div class="q-section-title">Q2. 판단 근거 <span style="color:var(--color-text-secondary);font-weight:400">(최대 2개)</span></div>
+        <div class="opt-group">${q2opts.map(([v,l])=>optBtn('q2',v,l,2)).join('')}</div>
+      </div>
+      <div class="iv-q-block">
+        <div class="q-section-title">Q3. 확인 우선순위 <span style="color:var(--color-text-secondary);font-weight:400">(Top 3)</span></div>
+        <div class="opt-group">${q3opts.map(([v,l])=>optBtn('q3',v,l,3)).join('')}</div>
+      </div>
+      <div class="iv-q-block">
+        <div class="q-section-title">Q4. 리스크 포인트</div>
+        <div class="opt-group">${q4opts.map(([v,l])=>optBtn('q4',v,l,9)).join('')}</div>
+      </div>
+      <div class="iv-q-block">
+        <div class="q-section-title">Q5. 한 줄 기준 메모</div>
+        <textarea class="q5-textarea" placeholder="판단 기준을 1~2문장으로 요약..." oninput="state.interviewAnswers.q5=this.value">${a.q5}</textarea>
+      </div>
+    </div>
+    <div class="iv-actions">
+      <button class="btn-secondary" style="font-size:12px;padding:6px 12px">세션 종료</button>
+      <button class="${a.q1?'btn-primary':'btn-secondary'}" style="font-size:12px;padding:6px 14px" onclick="saveInterview()">저장 → 다음 케이스</button>
+    </div>
+  </div>`;}
+
+/* ─────────────── 경험칙 DB ─────────────── */
+function renderKB(){
+  const db=state.knowledgeDB;
+  const total=db.length;
+  const cntNormal=db.filter(r=>r.q1==='normal').length;
+  const cntCaution=db.filter(r=>r.q1==='caution').length;
+  const cntRisk=db.filter(r=>r.q1==='risk').length;
+
+  const filter=state.kbFilter;
+  const search=state.kbSearch.toLowerCase().trim();
+  const filtered=db.filter(r=>{
+    if(filter!=='all'&&r.q1!==filter) return false;
+    if(search){
+      const hay=(r.id+' '+r.caseId+' '+r.q5+' '+r.season).toLowerCase();
+      if(!hay.includes(search)) return false;
+    }
+    return true;
+  });
+
+  const filters=[['all','전체',total],['normal','정상',cntNormal],['caution','주의',cntCaution],['risk','위험',cntRisk]];
+
+  return`
+    <div class="kb-stat-grid">
+      <div class="stat-card accent">
+        <div class="stat-label">총 저장된 경험칙</div>
+        <div class="stat-val">${total}<span class="stat-unit">건</span></div>
+      </div>
+      <div class="stat-card" style="border-left:3px solid #7BC23A">
+        <div class="stat-label">정상 판단</div>
+        <div class="stat-val" style="color:#3B6D11">${cntNormal}<span class="stat-unit">건</span></div>
+      </div>
+      <div class="stat-card" style="border-left:3px solid #E89B2A">
+        <div class="stat-label">주의 판단</div>
+        <div class="stat-val" style="color:#854F0B">${cntCaution}<span class="stat-unit">건</span></div>
+      </div>
+      <div class="stat-card" style="border-left:3px solid #E06060">
+        <div class="stat-label">위험 판단</div>
+        <div class="stat-val" style="color:#A32D2D">${cntRisk}<span class="stat-unit">건</span></div>
+      </div>
+    </div>
+
+    <div class="kb-filter-bar">
+      <span class="kb-filter-label">판단 필터</span>
+      ${filters.map(([v,l,c])=>`<button class="kb-filter-chip ${filter===v?'active':''}" onclick="setKbFilter('${v}')">${l} <span style="opacity:0.7">${c}</span></button>`).join('')}
+      <input class="kb-search" type="text" placeholder="Case ID, 메모, 시즌으로 검색..." value="${state.kbSearch}" oninput="setKbSearch(this.value)">
+      <span class="kb-count">${filtered.length}/${total} 건</span>
+    </div>
+
+    ${filtered.length===0 ? `
+      <div class="card"><div class="kb-empty">
+        <i class="ti ti-database-off" style="font-size:28px;color:var(--color-text-secondary);margin-bottom:8px;display:block"></i>
+        조건에 맞는 경험칙이 없습니다.
+      </div></div>
+    ` : filtered.map(r=>renderKBCard(r)).join('')}
+  `;
+}
+
+function renderKBCard(r){
+  const compLine=Object.entries(r.comps).map(([k,v])=>`<span>${k} <strong style="color:var(--color-text-primary)">${v}</strong></span>`).join(' · ');
+  const q2Tags=r.q2.map(c=>`<span class="kb-tag">${Q2_LABELS[c]||c}</span>`).join('');
+  const q3Items=r.q3.map((c,i)=>`<div class="kb-prio-row"><div class="kb-prio-num">${i+1}</div><span>${Q3_LABELS[c]||c}</span></div>`).join('');
+  const q4Tags=r.q4.length?r.q4.map(c=>`<span class="kb-tag risk">${Q4_LABELS[c]||c}</span>`).join(''):`<span style="font-size:11px;color:var(--color-text-secondary)">—</span>`;
+
+  return`<div class="kb-card kb-${r.q1}">
+    <div class="kb-card-head">
+      <span class="kb-card-id">${r.id}</span>
+      <span style="font-size:11px;color:var(--color-text-secondary);font-family:var(--font-mono)">${r.caseId}</span>
+      ${badge(r.q1)}
+      <span style="font-size:11px;color:var(--color-text-secondary)">${r.season}</span>
+      <div class="kb-card-meta">
+        <span class="kb-author">
+          <span class="kb-author-avatar">${userInitial(r.author)}</span>
+          ${userLabel(r.author)}
+        </span>
+        <span style="font-family:var(--font-mono)">${r.savedAt}</span>
+      </div>
+    </div>
+    <div class="kb-card-body">
+      <div class="kb-section">
+        <span class="kb-section-label">케이스</span>
+        <div class="kb-section-body">
+          <div class="kb-comp-line">${compLine}</div>
+          <div class="kb-metrics-line">
+            <span>CFPP <span class="v" style="color:#854F0B">${r.cfpp}°C</span></span>
+            <span>CP <span class="v" style="color:#185FA5">${r.cp}°C</span></span>
+            <span>PP <span class="v" style="color:#185FA5">${r.pp}°C</span></span>
+            ${r.aiDraft?`<span>AI 초안 ${badge(r.aiDraft)}</span>`:''}
+          </div>
+        </div>
+      </div>
+      <div class="kb-section">
+        <span class="kb-section-label">판단 근거</span>
+        <div class="kb-tag-list">${q2Tags||'<span style="font-size:11px;color:var(--color-text-secondary)">—</span>'}</div>
+      </div>
+      <div class="kb-section">
+        <span class="kb-section-label">확인 우선순위</span>
+        <div class="kb-prio">${q3Items||'<span style="font-size:11px;color:var(--color-text-secondary)">—</span>'}</div>
+      </div>
+      <div class="kb-section">
+        <span class="kb-section-label">리스크</span>
+        <div class="kb-tag-list">${q4Tags}</div>
+      </div>
+      <div class="kb-section">
+        <span class="kb-section-label">기준 메모</span>
+        <div class="kb-memo">${r.q5||'<span style="color:var(--color-text-secondary)">메모 없음</span>'}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function setKbFilter(v){state.kbFilter=v;render();}
+function setKbSearch(v){
+  state.kbSearch=v;
+  const id=document.activeElement?.id;
+  render();
+  if(id){const el=document.querySelector('input.kb-search');if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length);}}
+}
+
+/* ─────────────── AI 상담 ─────────────── */
+const mockReply = {
+  text: 'LCO(접촉분해 경유) 비율 증가는 저온성상에 직접적인 영향을 줍니다. LCO는 방향족 함량이 높아 파라핀 계열 반제품과 혼합 시 비선형적 CFPP 변화가 발생합니다.',
+  sources: [
+    { type:'case', id:'CASE-0089', desc:'LCO 30%, WAFI 230ppm → CFPP -15.8°C' },
+    { type:'rule', id:'RULE-0012', desc:'LCO 25% 초과 시 WAFI 20% 추가 투입 경험칙' },
+    { type:'doc',  id:'DOC-C-003', desc:'반제품 특성 — LCO 저온성상 영향' },
+  ]
+};
+
+function renderChat(){const msgs=state.chatMessages;return`<div class="chat-layout">
+  <div class="context-bar">
+    <i class="ti ti-file-description" style="font-size:14px;color:var(--color-text-secondary)"></i>
+    <span style="color:var(--color-text-secondary);font-size:11px">Batch</span>
+    <span class="ctx-batch">D-2105</span>${badge('caution')}
+    <span class="ctx-right">LCO 30% · 목표 CFPP -15°C · 혹한기</span>
+  </div>
+  <div class="chat-messages">
+    ${msgs.length===0?`<div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:8px">추천 질문</div>
+      <div class="suggestion-list">${['LCO 비율이 높을 때 WAFI를 더 넣어야 하나요?','혹한기 탱크 이력이 있을 때 안전 마진은?','현재 케이스에서 위험 신호가 있나요?'].map(s=>`
+        <button class="suggestion-btn" onclick="sendMsg('${s}')"><i class="ti ti-message-circle" style="font-size:14px;color:#BA7517;margin-right:6px"></i>${s}</button>`).join('')}
+      </div>`:''}
+    ${msgs.map(m=>`<div class="msg-${m.role}"><div class="bubble">${m.text}</div>
+      ${m.sources?`<div class="source-tags">${m.sources.map(s=>`<div class="src-tag"><span class="src-type src-${s.type}">${s.type.toUpperCase()}</span><span class="src-id">${s.id}</span><span class="src-desc">${s.desc}</span></div>`).join('')}</div>`:''}</div>`).join('')}
+    ${state.chatLoading?`<div style="display:flex;align-items:center;gap:8px;color:var(--color-text-secondary);font-size:13px"><div class="spinner" style="width:16px;height:16px;border-width:2px"></div>RAG 검색 중...</div>`:''}
+  </div>
+  <div class="chat-input-row">
+    <input id="chat-input" placeholder="질문을 입력하세요..." onkeydown="if(event.key==='Enter')sendMsg(this.value)">
+    <button class="btn-primary" onclick="sendMsgFromInput()"><i class="ti ti-send"></i></button>
+  </div>
+</div>`;}
+
+/* ─────────────── 메인 렌더러 / 액션 ─────────────── */
+function render(){
+  let body='';
+  if(state.tab==='dashboard') body=renderDashboard();
+  else if(state.tab==='judgment') body=renderJudgment();
+  else if(state.tab==='interview') body=renderInterview();
+  else if(state.tab==='kb') body=renderKB();
+  else body=renderChat();
+  document.getElementById('app').innerHTML=`${renderHeader()}<div class="bm-layout">${renderSidebar()}<div class="bm-body">${body}</div></div>`;
+}
+
+function navigate(tab){state.tab=tab;render();}
+function updateForm(k,v){state.form[k]=parseFloat(v)||0;}
+function requestJudgment(){state.judgStep='loading';render();setTimeout(()=>{state.judgStep='result';render();},2000);}
+
+function toggleAnswer(key,val,max){
+  const a=state.interviewAnswers;
+  if(Array.isArray(a[key])){
+    if(a[key].includes(val)) a[key]=a[key].filter(x=>x!==val);
+    else if(a[key].length<max) a[key].push(val);
+  } else { a[key]=val; }
+  render();
+}
+
+function saveInterview(){
+  const a=state.interviewAnswers;
+  if(!a.q1) return;
+  const newId='KB-'+String(state.knowledgeDB.length+1).padStart(4,'0');
+  state.knowledgeDB.unshift({
+    id:newId, caseId:ivCase.id, season:ivCase.season,
+    comps:{...ivCase.comps}, cfpp:ivCase.cfpp, cp:ivCase.cp, pp:ivCase.pp,
+    aiDraft:'caution',
+    q1:a.q1, q2:[...a.q2], q3:[...a.q3], q4:[...a.q4], q5:a.q5,
+    author:state.user, savedAt:nowStr()
+  });
+  state.interviewSaved=true;
+  render();
+}
+
+function resetInterview(){
+  state.interviewAnswers={q1:null,q2:[],q3:[],q4:[],q5:''};
+  state.interviewSaved=false;
+  render();
+}
+
+function sendMsg(text){
+  if(!text.trim()) return;
+  state.chatMessages.push({role:'user',text});
+  state.chatLoading=true;
+  render();
+  setTimeout(()=>{
+    state.chatMessages.push({role:'ai',...mockReply});
+    state.chatLoading=false;
+    render();
+  },1500);
+}
+function sendMsgFromInput(){const el=document.getElementById('chat-input');if(el)sendMsg(el.value);}
+
+/* 초기 렌더링 */
+render();
+</script>
+
+</body>
+</html>

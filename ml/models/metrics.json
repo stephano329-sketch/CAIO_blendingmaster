@@ -1,0 +1,31 @@
+{
+  "model_version": "cfpp_xgb_v1",
+  "n_train": 400,
+  "n_test": 100,
+  "mae": 1.1604332965657933,
+  "rmse": 1.4307295802218767,
+  "r2": 0.9435775415197007,
+  "target_mae": 2.0,
+  "target_r2": 0.85,
+  "meets_mae_target": true,
+  "meets_r2_target": true,
+  "features": [
+    "lgo_ratio",
+    "hgo_ratio",
+    "lco_ratio",
+    "kero_ratio",
+    "biodiesel_ratio",
+    "density_15c",
+    "n_paraffin_c10_c15",
+    "n_paraffin_c16_c20",
+    "n_paraffin_c21_plus",
+    "aromatic_content",
+    "sulfur_ppm",
+    "cetane_index",
+    "wafi_ppm",
+    "wafi_type",
+    "season",
+    "tank_history_flag"
+  ],
+  "target": "cfpp"
+}
