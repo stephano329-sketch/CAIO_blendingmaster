@@ -54,7 +54,7 @@ def _fallback_answer(query: str, snippets: list[dict]) -> str:
 def generate_answer(
     query: str,
     snippets: list[dict],
-    model: str = "claude-sonnet-4-5",
+    model: str = "claude-sonnet-4-6",
     max_tokens: int = 1024,
 ) -> LlmAnswer:
     api_key = os.getenv("ANTHROPIC_API_KEY")

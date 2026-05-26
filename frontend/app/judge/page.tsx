@@ -227,38 +227,15 @@ export default function JudgePage() {
   }
 
   if (step === "result" && result) {
-    const decisionLabel = result.decision === "normal" ? "정상 판단" : result.decision === "caution" ? "주의 판단" : "위험 판단";
-    const decisionIcon = result.decision === "risk" ? "ti-alert-octagon" : result.decision === "caution" ? "ti-alert-triangle" : "ti-circle-check";
-    const decisionColor = result.decision === "risk" ? "#A32D2D" : result.decision === "caution" ? "#BA7517" : "#3B6D11";
-    const headline = result.applied_heuristics[0] ?? "백엔드 모델 기반 추천 결과입니다.";
 
     return (
       <>
         {hover && <CaseTooltip c={hover.c} x={hover.x} y={hover.y} />}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 14, alignItems: "stretch" }}>
-          <div className="card">
-            <div className="judge-header" style={{ height: "100%" }}>
-              <i className={`ti ${decisionIcon}`} style={{ fontSize: 24, color: decisionColor, marginTop: 3 }} />
-              <div>
-                <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 5 }}>
-                  <DecisionBadge decision={result.decision} />
-                  <span style={{ fontSize: 15, fontWeight: 500, color: "var(--color-text-primary)" }}>
-                    {decisionLabel}
-                  </span>
-                  <span style={{ fontSize: 11, color: "var(--color-text-secondary)" }}>
-                    신뢰도 {(result.confidence * 100).toFixed(0)}%
-                  </span>
-                </div>
-                <div style={{ fontSize: 13, color: "var(--color-text-secondary)" }}>{headline}</div>
-              </div>
-            </div>
-          </div>
-          <div className="pred-cfpp-banner" style={{ margin: 0, height: "100%" }}>
-            <i className="ti ti-temperature" style={{ fontSize: 16, color: "#185FA5", flexShrink: 0 }} />
-            <span className="pred-cfpp-label">현재 Batch의 예측 CFPP (베이스라인)</span>
-            <span style={{ fontSize: 12, color: "var(--color-text-secondary)", margin: "0 2px" }}>:</span>
-            <span className="pred-cfpp-val">{result.predicted_cfpp_baseline.toFixed(1)}°C</span>
-          </div>
+        <div className="pred-cfpp-banner" style={{ marginBottom: 14 }}>
+          <i className="ti ti-temperature" style={{ fontSize: 16, color: "#185FA5", flexShrink: 0 }} />
+          <span className="pred-cfpp-label">현재 Batch의 예측 CFPP (베이스라인)</span>
+          <span style={{ fontSize: 12, color: "var(--color-text-secondary)", margin: "0 2px" }}>:</span>
+          <span className="pred-cfpp-val">{result.predicted_cfpp_baseline.toFixed(1)}°C</span>
         </div>
         <div className="scen-section-label">WAFI 추천 시나리오</div>
         <div className="scen-grid">
@@ -286,11 +263,8 @@ export default function JudgePage() {
                     {sc.predicted_cfpp.toFixed(1)}°C
                   </span>
                 </div>
-                <div className="conf-bar-bg">
-                  <div className="conf-bar" style={{ width: `${sc.confidence * 100}%`, background: base.color }} />
-                </div>
                 <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginTop: 4, textAlign: "right" }}>
-                  {(sc.confidence * 100).toFixed(0)}% · 마진 {sc.margin_to_target >= 0 ? "+" : ""}{sc.margin_to_target.toFixed(1)}°C
+                  마진 {sc.margin_to_target >= 0 ? "+" : ""}{sc.margin_to_target.toFixed(1)}°C
                 </div>
                 <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginTop: 8, paddingTop: 8, borderTop: "0.5px dashed var(--color-border-tertiary)", lineHeight: 1.4 }}>
                   {sc.rationale}
@@ -343,7 +317,6 @@ export default function JudgePage() {
                           >
                             {c.case_id}
                           </span>
-                          <DecisionBadge decision={c.decision} />
                         </div>
                         <div className="similar-right">
                           <span className="sim-pct">유사도 {(c.similarity_score * 100).toFixed(0)}%</span>

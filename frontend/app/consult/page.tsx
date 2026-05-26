@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { DecisionBadge } from "@/components/badge";
 import { api } from "@/lib/api";
 import type { ConsultResponse, ConsultCitation, Decision } from "@/lib/types";
 
@@ -117,7 +116,6 @@ export default function ConsultPage() {
           <>
             <span style={{ color: "var(--color-text-secondary)", fontSize: 11 }}>Batch</span>
             <span className="ctx-batch">{ctx.batchId}</span>
-            <DecisionBadge decision={ctx.decision} />
             <span className="ctx-right">
               LGO {ctx.blend.lgo}% · HGO {ctx.blend.hgo}% · LCO {ctx.blend.lco}% · Kero {ctx.blend.kero}% · Bio {ctx.blend.bio}%
               {" · 목표 CFPP "}{ctx.targetCfpp}°C

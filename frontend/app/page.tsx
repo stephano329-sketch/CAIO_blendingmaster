@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
-import { DecisionBadge } from "@/components/badge";
-import type { Decision } from "@/lib/types";
 
 type Stats = { today_batch_count: number; month_judge_count: number; month_saving_man_won: number };
 type LogRow = {
@@ -82,16 +80,23 @@ export default function DashboardPage() {
         )}
         {!error && logs && logs.length > 0 && (
           <div style={{ overflowX: "auto" }}>
-            <table className="log-table">
+            <table className="log-table" style={{ tableLayout: "fixed", width: "100%" }}>
+              <colgroup>
+                <col style={{ width: 100 }} />
+                <col style={{ width: 130 }} />
+                <col style={{ width: 110 }} />
+                <col style={{ width: 110 }} />
+                <col style={{ width: 150 }} />
+                <col style={{ width: 150 }} />
+              </colgroup>
               <thead>
                 <tr>
-                  <th className="col-date">날짜</th>
+                  <th>날짜</th>
                   <th>로그 ID</th>
-                  <th>판단</th>
-                  <th className="col-pred">예측 CFPP</th>
-                  <th className="col-wafi-s">WAFI 제안</th>
-                  <th className="col-actual-cfpp group-head">결과 · 실측 CFPP</th>
-                  <th className="col-actual-wafi group-head">결과 · WAFI 투입</th>
+                  <th>예측 CFPP</th>
+                  <th>WAFI 제안</th>
+                  <th className="group-head">결과 · 실측 CFPP</th>
+                  <th className="group-head">결과 · WAFI 투입</th>
                 </tr>
               </thead>
               <tbody>
@@ -100,9 +105,6 @@ export default function DashboardPage() {
                     <td className="c-muted">{l.date}</td>
                     <td className="mono" style={{ color: "var(--color-text-primary)", fontSize: 11 }}>
                       {l.log_id}
-                    </td>
-                    <td>
-                      <DecisionBadge decision={l.decision as Decision} />
                     </td>
                     <td className="mono c-blue">{l.pred_cfpp.toFixed(1)}°C</td>
                     <td className="mono c-amber">{l.wafi_suggested.toFixed(0)} ppm</td>

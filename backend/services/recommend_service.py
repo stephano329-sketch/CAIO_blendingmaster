@@ -187,14 +187,25 @@ def judge(req: JudgeRequest, db: Session) -> JudgeResponse:
 
 
 def _persist_decision_log(db: Session, req: JudgeRequest, resp: JudgeResponse, chosen_label: str) -> None:
-    """Append a row to decision_logs for dashboard reporting. Best-effort: errors swallowed."""
+    """Append a row to decision_logs for dashboard reporting. Best-effort: errors swallowed.
+
+    log_id format: D-YYMMDD-NNN (NNN = today's sequence number, zero-padded).
+    """
     from datetime import datetime
-    from uuid import uuid4
+    from sqlalchemy import func
     from backend.models import DecisionLog
 
     try:
+        now = datetime.utcnow()
+        today_start = datetime(now.year, now.month, now.day)
+        seq = (
+            db.query(func.count(DecisionLog.log_id))
+            .filter(DecisionLog.created_at >= today_start)
+            .scalar()
+            or 0
+        ) + 1
         log = DecisionLog(
-            log_id=f"D-{datetime.utcnow().strftime('%y%m%d-%H%M%S')}-{uuid4().hex[:4]}",
+            log_id=f"D-{now.strftime('%y%m%d')}-{seq:03d}",
             input=req.model_dump(),
             ai_recommendation=resp.model_dump(),
             selected_scenario=chosen_label,

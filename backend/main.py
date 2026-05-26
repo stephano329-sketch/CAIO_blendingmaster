@@ -1,4 +1,11 @@
 """FastAPI entry point for Blending Master (Phase 1: judge + cases endpoints)."""
+from pathlib import Path
+from dotenv import load_dotenv
+
+# Load .env from project root regardless of where uvicorn was launched.
+_PROJECT_ROOT = Path(__file__).resolve().parents[1]
+load_dotenv(dotenv_path=_PROJECT_ROOT / ".env", override=False)
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
