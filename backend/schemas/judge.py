@@ -68,3 +68,4 @@ class JudgeResponse(BaseModel):
     check_priority: list[str]
     similar_cases: list[SimilarCase]
     applied_heuristics: list[str] = Field(default_factory=list)
+    log_id: str | None = None

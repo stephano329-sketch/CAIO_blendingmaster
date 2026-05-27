@@ -15,30 +15,59 @@ type LogRow = {
   selected_scenario: string | null;
 };
 
-function delta(pred: number, actual: number) {
-  const d = (actual - pred).toFixed(1);
-  const sign = +d > 0 ? "+" : "";
-  return (
-    <span className={Math.abs(+d) <= 1 ? "delta-ok" : "delta-up"}>
-      {sign}
-      {d}
-    </span>
-  );
-}
+type EditField = "cfpp" | "wafi";
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [logs, setLogs] = useState<LogRow[] | null>(null);
   const [error, setError] = useState<string>("");
+  const [editing, setEditing] = useState<{ logId: string; field: EditField } | null>(null);
+  const [editValue, setEditValue] = useState<string>("");
+  const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
+  const refresh = () => {
     Promise.all([api.dashboardStats(), api.dashboardRecentLogs(10)])
       .then(([s, l]) => {
         setStats(s);
         setLogs(l);
       })
       .catch((e) => setError(e instanceof Error ? e.message : String(e)));
+  };
+
+  useEffect(() => {
+    refresh();
   }, []);
+
+  const startEdit = (logId: string, field: EditField, current: number | null) => {
+    setEditing({ logId, field });
+    setEditValue(current != null ? String(current) : "");
+  };
+
+  const cancelEdit = () => {
+    setEditing(null);
+    setEditValue("");
+  };
+
+  const saveEdit = async () => {
+    if (!editing || saving) return;
+    const v = parseFloat(editValue);
+    if (isNaN(v)) {
+      cancelEdit();
+      return;
+    }
+    setSaving(true);
+    try {
+      const body = editing.field === "cfpp" ? { actual_cfpp: v } : { actual_wafi: v };
+      await api.patchOutcome(editing.logId, body);
+      cancelEdit();
+      refresh();
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+      cancelEdit();
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <>
@@ -108,17 +137,72 @@ export default function DashboardPage() {
                     </td>
                     <td className="mono c-blue">{l.pred_cfpp.toFixed(1)}°C</td>
                     <td className="mono c-amber">{l.wafi_suggested.toFixed(0)} ppm</td>
-                    <td className="mono group-cell" style={{ color: "var(--color-text-primary)" }}>
-                      {l.actual_cfpp != null ? (
-                        <>
-                          {l.actual_cfpp.toFixed(1)}°C&nbsp;{delta(l.pred_cfpp, l.actual_cfpp)}
-                        </>
+                    <td
+                      className="mono group-cell"
+                      style={{ color: "var(--color-text-primary)", cursor: "pointer" }}
+                      onClick={() => editing?.logId !== l.log_id || editing.field !== "cfpp" ? startEdit(l.log_id, "cfpp", l.actual_cfpp) : undefined}
+                      title="클릭해서 실측 CFPP 입력"
+                    >
+                      {editing?.logId === l.log_id && editing.field === "cfpp" ? (
+                        <input
+                          autoFocus
+                          type="number"
+                          step="0.1"
+                          value={editValue}
+                          onChange={(e) => setEditValue(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") saveEdit();
+                            else if (e.key === "Escape") cancelEdit();
+                          }}
+                          onBlur={saveEdit}
+                          disabled={saving}
+                          style={{
+                            width: "70%",
+                            padding: "2px 4px",
+                            fontSize: 12,
+                            border: "1px solid #BA7517",
+                            borderRadius: 3,
+                            fontFamily: "var(--font-mono)",
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      ) : l.actual_cfpp != null ? (
+                        <>{l.actual_cfpp.toFixed(1)}°C</>
                       ) : (
-                        <span style={{ color: "var(--color-text-secondary)" }}>—</span>
+                        <span style={{ color: "var(--color-text-secondary)" }}>— 클릭 입력</span>
                       )}
                     </td>
-                    <td className="mono group-cell c-amber">
-                      {l.actual_wafi != null ? (
+                    <td
+                      className="mono group-cell c-amber"
+                      style={{ cursor: "pointer" }}
+                      onClick={() => editing?.logId !== l.log_id || editing.field !== "wafi" ? startEdit(l.log_id, "wafi", l.actual_wafi) : undefined}
+                      title="클릭해서 실측 WAFI 입력"
+                    >
+                      {editing?.logId === l.log_id && editing.field === "wafi" ? (
+                        <input
+                          autoFocus
+                          type="number"
+                          step="10"
+                          min={0}
+                          value={editValue}
+                          onChange={(e) => setEditValue(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") saveEdit();
+                            else if (e.key === "Escape") cancelEdit();
+                          }}
+                          onBlur={saveEdit}
+                          disabled={saving}
+                          style={{
+                            width: "70%",
+                            padding: "2px 4px",
+                            fontSize: 12,
+                            border: "1px solid #BA7517",
+                            borderRadius: 3,
+                            fontFamily: "var(--font-mono)",
+                          }}
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      ) : l.actual_wafi != null ? (
                         <>
                           {l.actual_wafi.toFixed(0)} ppm
                           {l.actual_wafi !== l.wafi_suggested && (
@@ -130,7 +214,7 @@ export default function DashboardPage() {
                           )}
                         </>
                       ) : (
-                        <span style={{ color: "var(--color-text-secondary)" }}>—</span>
+                        <span style={{ color: "var(--color-text-secondary)" }}>— 클릭 입력</span>
                       )}
                     </td>
                   </tr>

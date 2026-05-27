@@ -10,6 +10,7 @@ For Phase 1 the pipeline is:
 """
 from __future__ import annotations
 
+from typing import Any
 from sqlalchemy.orm import Session
 
 from backend.engine.ml_predictor import get_predictor
@@ -181,13 +182,14 @@ def judge(req: JudgeRequest, db: Session) -> JudgeResponse:
         similar_cases=similar_cases,
         applied_heuristics=[],
     )
-
-    _persist_decision_log(db, req, response, chosen_label)
+    # NOTE: do not persist DecisionLog here.
+    # Logs are created only when the user explicitly selects a scenario
+    # via POST /decision-logs (see backend.routers.dashboard).
     return response
 
 
-def _persist_decision_log(db: Session, req: JudgeRequest, resp: JudgeResponse, chosen_label: str) -> None:
-    """Append a row to decision_logs for dashboard reporting. Best-effort: errors swallowed.
+def _persist_decision_log(db: Session, req: JudgeRequest, resp: JudgeResponse, chosen_label: str) -> str | None:
+    """Append a row to decision_logs and return the log_id. Best-effort: errors swallowed.
 
     log_id format: D-YYMMDD-NNN (NNN = today's sequence number, zero-padded).
     """
@@ -204,50 +206,136 @@ def _persist_decision_log(db: Session, req: JudgeRequest, resp: JudgeResponse, c
             .scalar()
             or 0
         ) + 1
+        log_id = f"D-{now.strftime('%y%m%d')}-{seq:03d}"
         log = DecisionLog(
-            log_id=f"D-{now.strftime('%y%m%d')}-{seq:03d}",
+            log_id=log_id,
             input=req.model_dump(),
             ai_recommendation=resp.model_dump(),
             selected_scenario=chosen_label,
         )
         db.add(log)
         db.commit()
+        return log_id
     except Exception:
         db.rollback()
+        return None
+
+
+# Feature scales for structural similarity (tighter scales = more sensitive)
+_STRUCT_SCALES = {
+    "lgo_ratio": 0.10,
+    "hgo_ratio": 0.10,
+    "lco_ratio": 0.05,           # LCO is highly impactful -> small scale = high sensitivity
+    "kero_ratio": 0.08,
+    "biodiesel_ratio": 0.02,
+    "density_15c": 5.0,
+    "n_paraffin_c16_c20": 1.5,
+    "n_paraffin_c21_plus": 0.8,  # paraffin C21+ very impactful
+    "aromatic_content": 3.0,
+    "cetane_index": 3.0,
+    "target_cfpp": 3.0,
+}
+
+
+def _structural_distance(query: dict, case_row, target_cfpp: float) -> float:
+    """Weighted Euclidean distance over blend ratios + key metrics + target CFPP.
+
+    Lower scales = features are weighted more strongly (more sensitive to differences).
+    """
+    import math
+    case_blend = case_row.blend_components or {}
+    case_metrics = case_row.key_metrics or {}
+
+    total = 0.0
+    n = 0
+    blend_keys = ["lgo", "hgo", "lco", "kero", "biodiesel"]
+    for k in blend_keys:
+        q = query.get(f"{k}_ratio")
+        c = case_blend.get(k)
+        if q is None or c is None:
+            continue
+        scale = _STRUCT_SCALES[f"{k}_ratio"]
+        total += ((q - c) / scale) ** 2
+        n += 1
+
+    metric_keys = ["density_15c", "n_paraffin_c16_c20", "n_paraffin_c21_plus", "aromatic_content", "cetane_index"]
+    for k in metric_keys:
+        q = query.get(k)
+        c = case_metrics.get(k)
+        if q is None or c is None:
+            continue
+        scale = _STRUCT_SCALES[k]
+        total += ((q - c) / scale) ** 2
+        n += 1
+
+    # target_cfpp difference (penalty)
+    cq = target_cfpp
+    cc = case_row.target_cfpp
+    if cc is not None:
+        total += ((cq - cc) / _STRUCT_SCALES["target_cfpp"]) ** 2
+        n += 1
+
+    if n == 0:
+        return math.inf
+    return math.sqrt(total / n)
 
 
 def _retrieve_similar_cases(req: JudgeRequest, features: dict, db) -> list[SimilarCase]:
-    """Prefer RAG (vector) retrieval; fall back to numeric distance over Case rows."""
-    query = (
+    """Hybrid retrieval: vector RAG for broad recall + structural re-ranking for sensitivity.
+
+    Pipeline:
+      1. RAG retrieves top-K candidates (broad) constrained to season.
+      2. Re-rank by weighted feature distance (blend ratios + key metrics + target CFPP).
+      3. Return top-3 most structurally similar cases.
+    """
+    query_text = (
         f"{req.season} 경유 블렌딩, 목표 CFPP {req.target_cfpp:.1f}°C, "
         f"LGO {features['lgo_ratio']:.2f} HGO {features['hgo_ratio']:.2f} "
         f"LCO {features['lco_ratio']:.2f}, n-파라핀 C21+ {features['n_paraffin_c21_plus']:.2f}wt%, "
         f"탱크 이력 {req.tank_history_flag}, WAFI {features['wafi_type']} {features['wafi_ppm']:.0f}ppm"
     )
+    CANDIDATE_K = 20       # broad recall
+    FINAL_K = 3            # final top-N returned
+
     try:
         from backend.engine.rag_retriever import get_retriever
+        from backend.models import Case as CaseModel
 
         retriever = get_retriever()
         if retriever.count() > 0:
-            docs = retriever.retrieve_similar_cases(query=query, top_k=3, season=req.season)
+            docs = retriever.retrieve_similar_cases(query=query_text, top_k=CANDIDATE_K, season=req.season)
             if not docs:
-                docs = retriever.retrieve_similar_cases(query=query, top_k=3, season=None)
-            from backend.models import Case as CaseModel
+                docs = retriever.retrieve_similar_cases(query=query_text, top_k=CANDIDATE_K, season=None)
 
-            out: list[SimilarCase] = []
+            # Re-rank candidates by structural distance
+            candidates: list[tuple[Any, float, float]] = []  # (case_row, struct_dist, rag_sim)
             for d in docs:
                 row = db.get(CaseModel, d.doc_id) if d.doc_id else None
+                if row is None:
+                    continue
+                struct_dist = _structural_distance(features, row, req.target_cfpp)
+                candidates.append((row, struct_dist, d.similarity_score))
+
+            # Sort by structural distance ascending (closer = more similar)
+            candidates.sort(key=lambda x: x[1])
+            top = candidates[:FINAL_K]
+
+            out: list[SimilarCase] = []
+            for row, struct_dist, rag_sim in top:
+                # Blend structural and RAG signals: 70% structural + 30% RAG
+                struct_sim = 1.0 / (1.0 + struct_dist)
+                hybrid_sim = 0.7 * struct_sim + 0.3 * rag_sim
                 out.append(
                     SimilarCase(
-                        case_id=d.doc_id,
-                        decision=(row.decision if row else d.metadata.get("decision", "normal")),
-                        similarity_score=round(d.similarity_score, 3),
-                        rule_summary=(row.rule_summary if row else None),
-                        blend_components=(row.blend_components if row else None),
-                        key_metrics=(row.key_metrics if row else None),
-                        target_cfpp=(row.target_cfpp if row else None),
-                        season=(row.season if row else None),
-                        tank_history_flag=(row.tank_history_flag if row else None),
+                        case_id=row.case_id,
+                        decision=row.decision or "normal",
+                        similarity_score=round(hybrid_sim, 3),
+                        rule_summary=row.rule_summary,
+                        blend_components=row.blend_components,
+                        key_metrics=row.key_metrics,
+                        target_cfpp=row.target_cfpp,
+                        season=row.season,
+                        tank_history_flag=row.tank_history_flag,
                     )
                 )
             if out:

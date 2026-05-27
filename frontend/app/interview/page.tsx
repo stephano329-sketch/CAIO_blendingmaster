@@ -180,7 +180,10 @@ export default function InterviewPage() {
               {SEASON_LABEL[iv.season] ?? iv.season}
             </span>
           </div>
-          <div className="comp-grid">
+          <div
+            className="comp-grid"
+            style={{ gridTemplateColumns: `repeat(${Object.keys(iv.blend_components).length}, 1fr)` }}
+          >
             {Object.entries(iv.blend_components).map(([k, v]) => (
               <div key={k} className="comp-item">
                 <div className="comp-label">{k}</div>

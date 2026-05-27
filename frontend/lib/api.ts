@@ -40,6 +40,17 @@ export const api = {
     const suffix = q.toString() ? `?${q.toString()}` : "";
     return call<CaseRow[]>(`/cases${suffix}`);
   },
+  getCase: (caseId: string) =>
+    call<{
+      case_id: string;
+      season: string;
+      tank_history_flag: string;
+      target_cfpp: number;
+      decision: string;
+      rule_summary: string | null;
+      blend_components: Record<string, number>;
+      key_metrics: Record<string, number | string>;
+    }>(`/cases/${encodeURIComponent(caseId)}`),
   nextInterviewCase: () =>
     call<{
       case_id: string;
@@ -82,6 +93,44 @@ export const api = {
   dashboardStats: () =>
     call<{ today_batch_count: number; month_judge_count: number; month_saving_man_won: number }>(
       "/dashboard/stats",
+    ),
+  listBatches: (params: { limit?: number; offset?: number } = {}) => {
+    const q = new URLSearchParams();
+    if (params.limit != null) q.set("limit", String(params.limit));
+    if (params.offset != null) q.set("offset", String(params.offset));
+    const suffix = q.toString() ? `?${q.toString()}` : "";
+    return call<Array<{
+      log_id: string;
+      created_at: string;
+      season: string;
+      blend_components: Record<string, number>;
+      target_cfpp: number;
+      predicted_cfpp_baseline: number;
+      selected_scenario: string | null;
+      selected_wafi_ppm: number | null;
+      selected_wafi_type: string | null;
+      predicted_cfpp_after_wafi: number | null;
+      margin_to_target: number | null;
+      check_priority: string[];
+      similar_case_ids: string[];
+      actual_cfpp: number | null;
+      actual_wafi: number | null;
+    }>>(`/journal/batches${suffix}`);
+  },
+  createDecisionLog: (payload: { input: unknown; ai_recommendation: unknown; selected_scenario: string }) =>
+    call<{ log_id: string; selected_scenario: string }>(
+      "/decision-logs",
+      { method: "POST", body: JSON.stringify(payload) },
+    ),
+  patchSelectedScenario: (logId: string, label: string) =>
+    call<{ log_id: string; selected_scenario: string }>(
+      `/decision-logs/${encodeURIComponent(logId)}/select-scenario`,
+      { method: "PATCH", body: JSON.stringify({ label }) },
+    ),
+  patchOutcome: (logId: string, body: { actual_cfpp?: number; actual_wafi?: number }) =>
+    call<{ log_id: string; actual_outcome: { cfpp?: number; wafi_ppm?: number } }>(
+      `/decision-logs/${encodeURIComponent(logId)}/outcome`,
+      { method: "PATCH", body: JSON.stringify(body) },
     ),
   dashboardRecentLogs: (limit = 10) =>
     call<Array<{

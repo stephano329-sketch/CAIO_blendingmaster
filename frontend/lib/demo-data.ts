@@ -10,6 +10,7 @@ export const NAV = [
   { id: "/", label: "대시보드", icon: "ti-layout-dashboard" },
   { id: "/judge", label: "신규 판단", icon: "ti-clipboard-check" },
   { id: "/consult", label: "AI 상담", icon: "ti-message-dots" },
+  { id: "/journal", label: "제품 배합 일지", icon: "ti-book-2" },
   { id: "/interview", label: "지식 추출", icon: "ti-user-question" },
   { id: "/kb", label: "경험치 DB", icon: "ti-database" },
   { id: "/rag", label: "RAG 문서 확인", icon: "ti-file-search" },

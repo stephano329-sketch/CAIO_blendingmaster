@@ -157,6 +157,8 @@ function CaseTooltip({ c, x, y }: { c: SimilarCase; x: number; y: number }) {
 
 export default function JudgePage() {
   const [step, setStep] = useState<Step>("input");
+  const [selectedLabel, setSelectedLabel] = useState<string>("balanced");
+  const [adopted, setAdopted] = useState<string | null>(null);
   const [form, setForm] = useState<FormState>(INITIAL);
   const [result, setResult] = useState<JudgeResponse | null>(null);
   const [error, setError] = useState<string>("");
@@ -179,6 +181,8 @@ export default function JudgePage() {
   const submit = async () => {
     setStep("loading");
     setError("");
+    setAdopted(null);
+    setSelectedLabel("balanced");
     try {
       const r = await api.judge(buildRequest(form));
       setResult(r);
@@ -242,10 +246,36 @@ export default function JudgePage() {
           {result.scenarios.map((sc) => {
             const base = SCEN_BASE[sc.label] ?? { label: sc.label, color: "#185FA5" };
             const isRec = sc.label === PRIORITY_TO_LABEL[form.priority];
+            const isSelected = sc.label === selectedLabel;
             const met = sc.margin_to_target >= 0;
             return (
-              <div key={sc.label} className={`scen-card ${isRec ? "rec" : ""}`}>
+              <div
+                key={sc.label}
+                className={`scen-card ${isRec ? "rec" : ""} ${isSelected ? "selected" : ""}`}
+                onClick={() => setSelectedLabel(sc.label)}
+                style={{ cursor: "pointer" }}
+              >
                 {isRec && <span className="rec-badge">추천</span>}
+                {isSelected && (
+                  <span
+                    style={{
+                      position: "absolute",
+                      top: -9,
+                      right: 10,
+                      background: "#3B6D11",
+                      color: "#fff",
+                      fontSize: 10,
+                      padding: "2px 7px",
+                      borderRadius: 10,
+                      fontWeight: 500,
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 3,
+                    }}
+                  >
+                    <i className="ti ti-check" style={{ fontSize: 11 }} />선택됨
+                  </span>
+                )}
                 <div style={{ fontSize: 11, fontWeight: 600, color: met ? "#3B6D11" : "#A32D2D", marginBottom: 6, display: "flex", alignItems: "center", gap: 4 }}>
                   <i className={`ti ${met ? "ti-circle-check" : "ti-circle-x"}`} style={{ fontSize: 13 }} />
                   {met ? "목표 달성" : "목표 미달성"}
@@ -336,7 +366,30 @@ export default function JudgePage() {
         </div>
         <div className="bottom-actions">
           <button className="btn-secondary" onClick={() => setStep("input")}>← 다시 입력</button>
-          <button className="btn-primary">균형 시나리오 채택</button>
+          <button
+            className="btn-primary"
+            onClick={async () => {
+              const sc = result.scenarios.find((s) => s.label === selectedLabel);
+              const label = SCEN_BASE[selectedLabel]?.label ?? selectedLabel;
+              const baseMsg = sc
+                ? `${label} 시나리오 채택 — WAFI ${sc.wafi_ppm} ppm (${sc.wafi_type}), 예상 CFPP ${sc.predicted_cfpp.toFixed(1)}°C`
+                : `${label} 시나리오 채택`;
+              try {
+                const created = await api.createDecisionLog({
+                  input: buildRequest(form),
+                  ai_recommendation: result,
+                  selected_scenario: selectedLabel,
+                });
+                // remember the new log_id so subsequent outcome edits stay in sync
+                setResult({ ...result, log_id: created.log_id });
+                setAdopted(`${baseMsg} (DB 저장 완료 · ${created.log_id})`);
+              } catch (e) {
+                setAdopted(baseMsg + ` (DB 저장 실패: ${e instanceof Error ? e.message : String(e)})`);
+              }
+            }}
+          >
+            시나리오 선택
+          </button>
           <button
             className="btn-secondary"
             style={{ color: "#185FA5", borderColor: "#B5D4F4" }}
@@ -362,6 +415,25 @@ export default function JudgePage() {
             AI 상담 요청
           </button>
         </div>
+        {adopted && (
+          <div
+            style={{
+              marginTop: 10,
+              padding: "8px 12px",
+              fontSize: 12,
+              color: "#3B6D11",
+              background: "#F4FBE8",
+              border: "0.5px solid #97C459",
+              borderRadius: "var(--border-radius-md)",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+            }}
+          >
+            <i className="ti ti-check" style={{ fontSize: 14 }} />
+            {adopted}
+          </div>
+        )}
       </>
     );
   }
@@ -371,7 +443,21 @@ export default function JudgePage() {
       <div className="judg-two-col">
         <div className="judg-col">
           <div className="form-section">
-            <div className="form-section-title">블렌딩 구성</div>
+            <div
+              className="form-section-title"
+              style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}
+            >
+              <span>블렌딩 구성</span>
+              <button
+                type="button"
+                className="btn-secondary"
+                title="PoC에서 구현하지 않음"
+                style={{ fontSize: 11, padding: "4px 10px", display: "inline-flex", alignItems: "center", gap: 4 }}
+              >
+                <i className="ti ti-clipboard-text" style={{ fontSize: 13 }} />
+                제품 배합 계획 불러오기
+              </button>
+            </div>
             <div className="fields-wrap">
               {FIELDS.map(([k, label, unit]) => (
                 <div key={k} className="field">
@@ -397,7 +483,21 @@ export default function JudgePage() {
           </div>
 
           <div className="form-section" style={{ marginTop: 12 }}>
-            <div className="form-section-title">판단 조건</div>
+            <div
+              className="form-section-title"
+              style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}
+            >
+              <span>판단 조건</span>
+              <button
+                type="button"
+                className="btn-secondary"
+                title="PoC에서 구현하지 않음"
+                style={{ fontSize: 11, padding: "4px 10px", display: "inline-flex", alignItems: "center", gap: 4 }}
+              >
+                <i className="ti ti-calendar-event" style={{ fontSize: 13 }} />
+                제품 운영 계획 불러오기
+              </button>
+            </div>
             <div className="field">
               <label>
                 목표 CFPP <span style={{ color: "var(--color-text-secondary)" }}>(°C)</span>
@@ -424,20 +524,9 @@ export default function JudgePage() {
                 value={form.tankHistory}
                 onChange={(e) => setForm({ ...form, tankHistory: e.target.value as TankHistory })}
               >
-                <option value="clean">clean (잔류물 없음)</option>
-                <option value="recent_change">recent_change (최근 전환)</option>
-                <option value="mixed">mixed (혼합 잔류)</option>
-              </select>
-            </div>
-            <div className="field">
-              <label>최적화 우선순위</label>
-              <select
-                value={form.priority}
-                onChange={(e) => setForm({ ...form, priority: e.target.value as FormState["priority"] })}
-              >
-                <option value="cost">비용 최소</option>
-                <option value="balanced">균형</option>
-                <option value="safe">안전 우선</option>
+                <option value="clean">잔류물 없음</option>
+                <option value="recent_change">최근 전환</option>
+                <option value="mixed">혼합물 잔류</option>
               </select>
             </div>
             <div className="field">
@@ -457,7 +546,21 @@ export default function JudgePage() {
 
         <div className="judg-col">
           <div className="form-section stretch">
-            <div className="form-section-title">주요 성상</div>
+            <div
+              className="form-section-title"
+              style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}
+            >
+              <span>주요 성상</span>
+              <button
+                type="button"
+                className="btn-secondary"
+                title="PoC에서 구현하지 않음"
+                style={{ fontSize: 11, padding: "4px 10px", display: "inline-flex", alignItems: "center", gap: 4 }}
+              >
+                <i className="ti ti-database-import" style={{ fontSize: 13 }} />
+                RTDB 분석값 불러오기
+              </button>
+            </div>
             <div style={{ fontSize: 11, color: "var(--color-text-secondary)", marginTop: -8, marginBottom: 10 }}>
               * CP, PP는 모델 입력에 사용되지 않습니다 (운영 참고용)
             </div>

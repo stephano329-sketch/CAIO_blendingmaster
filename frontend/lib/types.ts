@@ -63,6 +63,7 @@ export interface JudgeResponse {
   check_priority: string[];
   similar_cases: SimilarCase[];
   applied_heuristics: string[];
+  log_id?: string | null;
 }
 
 export interface ConsultCitation {

@@ -16,7 +16,7 @@ export function Nav() {
               <i className={`ti ${n.icon}`} />
               {n.label}
             </Link>
-            {n.id === "/consult" && (
+            {n.id === "/journal" && (
               <hr
                 style={{
                   border: 0,
