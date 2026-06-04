@@ -1,63 +1,58 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { DecisionBadge } from "@/components/badge";
-import { Q2_OPTS, Q3_OPTS, Q4_OPTS, type Decision } from "@/lib/demo-data";
+import { Q2_OPTS, Q3_OPTS, Q4_OPTS } from "@/lib/demo-data";
 import { useUser } from "@/components/user-context";
 import { api } from "@/lib/api";
+import troubleCasesData from "@/lib/trouble-cases.json";
 
 type Answers = { q1: string | null; q2: string[]; q3: string[]; q4: string[]; q5: string };
 
-type IVCase = {
-  case_id: string;
-  season: string;          // backend code: "winter" | "deep_winter"
-  blend_components: Record<string, string>;
-  cfpp: number;
-  cp: number;
-  pp: number;
-  ai_draft_decision: string;
+type TroubleCase = {
+  id: string;
+  date: string;
+  season: "winter" | "deep_winter";
+  situation: string;     // when + what was being made (간단 상황)
+  problem: string;       // 무엇이 문제였는지
+  cause: string;         // 추정 원인
+  resolution: string;    // 어떻게 해결했는지
 };
 
 const SEASON_LABEL: Record<string, string> = { winter: "동절기", deep_winter: "혹한기" };
 
-const AI_DRAFT_HINT: Record<string, string> = {
-  normal: "기준 내 안착 추정",
-  caution: "경계값·이력 영향 기반 주의 추정",
-  risk: "기준 미달 또는 위험 패턴 감지",
-};
+const TROUBLE_CASES: TroubleCase[] = troubleCasesData as TroubleCase[];
 
 export default function InterviewPage() {
   const [answers, setAnswers] = useState<Answers>({ q1: null, q2: [], q3: [], q4: [], q5: "" });
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string>("");
-  const [iv, setIv] = useState<IVCase | null>(null);
-  const [loadingCase, setLoadingCase] = useState(true);
+  const [caseIdx, setCaseIdx] = useState(0);
+  const [extractedIds, setExtractedIds] = useState<Set<string>>(new Set());
   const router = useRouter();
   const { user } = useUser();
 
-  const fetchCase = async () => {
-    setLoadingCase(true);
-    setError("");
+  const tc = TROUBLE_CASES[caseIdx];
+  const isExtracted = extractedIds.has(tc.id);
+
+  const refreshExtracted = useCallback(async () => {
     try {
-      const c = await api.nextInterviewCase();
-      setIv(c as IVCase);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
-    } finally {
-      setLoadingCase(false);
+      const items = await api.listKnowledge({ limit: 500 });
+      setExtractedIds(new Set(items.map((it) => it.case_id)));
+    } catch {
+      // silent — badge just won't show if API fails
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchCase();
-  }, []);
+    refreshExtracted();
+  }, [refreshExtracted]);
 
   const reset = () => {
     setAnswers({ q1: null, q2: [], q3: [], q4: [], q5: "" });
     setSaved(false);
-    fetchCase();
+    setCaseIdx((i) => (i + 1) % TROUBLE_CASES.length);
   };
 
   if (saved) {
@@ -124,18 +119,18 @@ export default function InterviewPage() {
   };
 
   const save = async () => {
-    if (!answers.q1 || saving || !iv) return;
+    if (!answers.q1 || saving) return;
     setSaving(true);
     setError("");
     try {
       await api.createKnowledge({
-        case_id: iv.case_id,
-        season: iv.season,
-        blend_components: iv.blend_components,
-        cfpp: iv.cfpp,
-        cp: iv.cp,
-        pp: iv.pp,
-        ai_draft_decision: iv.ai_draft_decision,
+        case_id: tc.id,
+        season: tc.season,
+        blend_components: {},
+        cfpp: 0,
+        cp: 0,
+        pp: 0,
+        ai_draft_decision: "caution",
         q1_decision: answers.q1,
         q2_reasons: answers.q2,
         q3_priorities: answers.q3,
@@ -143,6 +138,7 @@ export default function InterviewPage() {
         q5_memo: answers.q5,
         author: user,
       });
+      setExtractedIds((prev) => new Set(prev).add(tc.id));
       setSaved(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -151,70 +147,53 @@ export default function InterviewPage() {
     }
   };
 
-  if (loadingCase && !iv) {
-    return (
-      <div style={{ padding: 14, fontSize: 12, color: "var(--color-text-secondary)" }}>
-        다음 케이스 불러오는 중...
-      </div>
-    );
-  }
-
-  if (!iv) {
-    return (
-      <div className="card" style={{ padding: 14, color: "#A32D2D", fontSize: 12 }}>
-        <i className="ti ti-alert-octagon" style={{ marginRight: 6 }} />
-        {error || "케이스를 불러올 수 없습니다."}
-      </div>
-    );
-  }
-
   return (
     <div className="iv-layout">
       <div className="iv-top">
-        <div className="iv-case-card">
-          <div className="case-meta">
-            <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 500, color: "var(--color-text-primary)" }}>
-              {iv.case_id}
-            </span>
-            <span style={{ fontSize: 11, color: "var(--color-text-secondary)" }}>
-              {SEASON_LABEL[iv.season] ?? iv.season}
-            </span>
-          </div>
-          <div
-            className="comp-grid"
-            style={{ gridTemplateColumns: `repeat(${Object.keys(iv.blend_components).length}, 1fr)` }}
-          >
-            {Object.entries(iv.blend_components).map(([k, v]) => (
-              <div key={k} className="comp-item">
-                <div className="comp-label">{k}</div>
-                <div className="comp-val">{v}</div>
-              </div>
-            ))}
-          </div>
-          <div className="metrics-row">
-            <div className="metric-item">
-              <div className="m-label">CFPP</div>
-              <div className="m-val" style={{ color: "#854F0B" }}>{iv.cfpp.toFixed(1)}°C</div>
-            </div>
-            <div className="metric-item">
-              <div className="m-label">CP</div>
-              <div className="m-val" style={{ color: "#185FA5" }}>{iv.cp.toFixed(1)}°C</div>
-            </div>
-            <div className="metric-item">
-              <div className="m-label">PP</div>
-              <div className="m-val" style={{ color: "#185FA5" }}>{iv.pp.toFixed(1)}°C</div>
-            </div>
-          </div>
-          <div className="ai-draft-box">
-            <div style={{ fontSize: 10, color: "var(--color-text-secondary)", marginBottom: 5 }}>
-              AI 초안 판단
-            </div>
+        <div className="iv-case-card" style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <DecisionBadge decision={iv.ai_draft_decision as Decision} />
-              <span style={{ fontSize: 12, color: "var(--color-text-secondary)" }}>
-                {AI_DRAFT_HINT[iv.ai_draft_decision] ?? "기준 기반 추정"}
+              <i className="ti ti-bulb" style={{ fontSize: 16, color: "#BA7517" }} />
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: 12, fontWeight: 600, color: "var(--color-text-primary)" }}>
+                {tc.id}
               </span>
+              <span style={{ fontSize: 11, color: "var(--color-text-secondary)" }}>
+                {tc.date} · {SEASON_LABEL[tc.season]}
+              </span>
+              {isExtracted && (
+                <span
+                  style={{
+                    fontSize: 10,
+                    fontWeight: 600,
+                    color: "#fff",
+                    background: "#3B6D11",
+                    padding: "2px 8px",
+                    borderRadius: 10,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 3,
+                  }}
+                >
+                  <i className="ti ti-check" style={{ fontSize: 10 }} />
+                  지식추출 완료
+                </span>
+              )}
             </div>
+            <span style={{ fontSize: 10, color: "var(--color-text-secondary)" }}>
+              {caseIdx + 1} / {TROUBLE_CASES.length}
+            </span>
+          </div>
+
+          <div style={{ fontSize: 12, color: "var(--color-text-primary)", lineHeight: 1.6, padding: "8px 10px", background: "var(--color-background-secondary)", borderRadius: 4 }}>
+            {tc.situation}
+          </div>
+
+          <TroubleLine icon="ti-alert-triangle" color="#C0392B" label="문제" text={tc.problem} />
+          <TroubleLine icon="ti-search" color="#B7791F" label="추정 원인" text={tc.cause} />
+          <TroubleLine icon="ti-check" color="#3B6D11" label="해결" text={tc.resolution} />
+
+          <div style={{ fontSize: 10, color: "var(--color-text-secondary)", marginTop: 4, paddingTop: 8, borderTop: "0.5px dashed var(--color-border-tertiary)" }}>
+            위 사례에 대해 아래 Q1~Q5를 답변해 주세요.
           </div>
         </div>
 
@@ -309,9 +288,22 @@ export default function InterviewPage() {
       </div>
 
       <div className="iv-actions">
-        <button className="btn-secondary" style={{ fontSize: 12, padding: "6px 12px" }}>
-          세션 종료
-        </button>
+        <div style={{ display: "flex", gap: 6 }}>
+          <button
+            className="btn-secondary"
+            style={{ fontSize: 12, padding: "6px 12px" }}
+            onClick={() => {
+              setAnswers({ q1: null, q2: [], q3: [], q4: [], q5: "" });
+              setSaved(false);
+              setCaseIdx((i) => (i - 1 + TROUBLE_CASES.length) % TROUBLE_CASES.length);
+            }}
+          >
+            ← 이전 사례
+          </button>
+          <button className="btn-secondary" style={{ fontSize: 12, padding: "6px 12px" }} onClick={reset}>
+            다음 사례 →
+          </button>
+        </div>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           {error && (
             <span style={{ fontSize: 11, color: "#A32D2D" }}>
@@ -325,9 +317,21 @@ export default function InterviewPage() {
             onClick={save}
             disabled={saving || !answers.q1}
           >
-            {saving ? "저장 중..." : "저장 → 다음 케이스"}
+            {saving ? "저장 중..." : "저장 → 다음 사례"}
           </button>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function TroubleLine({ icon, color, label, text }: { icon: string; color: string; label: string; text: string }) {
+  return (
+    <div style={{ display: "flex", gap: 6 }}>
+      <i className={`ti ${icon}`} style={{ fontSize: 12, color, marginTop: 3, flexShrink: 0 }} />
+      <div style={{ fontSize: 12, lineHeight: 1.6, color: "var(--color-text-primary)" }}>
+        <span style={{ fontWeight: 600, color, marginRight: 4 }}>{label}</span>
+        {text}
       </div>
     </div>
   );

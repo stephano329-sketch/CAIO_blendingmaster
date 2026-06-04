@@ -7,6 +7,7 @@ export const USERS: { value: UserKey; label: string; initials: string }[] = [
 ];
 
 export const NAV = [
+  { id: "/introduction", label: "Introduction", icon: "ti-info-circle" },
   { id: "/", label: "대시보드", icon: "ti-layout-dashboard" },
   { id: "/judge", label: "신규 판단", icon: "ti-clipboard-check" },
   { id: "/consult", label: "AI 상담", icon: "ti-message-dots" },

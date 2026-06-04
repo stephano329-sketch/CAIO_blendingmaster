@@ -1,14 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  async rewrites() {
-    return [
-      {
-        source: "/api/backend/:path*",
-        destination: (process.env.BACKEND_URL || "http://localhost:8000") + "/:path*",
-      },
-    ];
-  },
+  // /api/backend/* is handled by app/api/backend/[...path]/route.ts
+  // (Route Handler bypasses the ~30s rewrite proxy timeout, needed for long LLM responses)
 };
 
 export default nextConfig;
