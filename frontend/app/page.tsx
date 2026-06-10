@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { api } from "@/lib/api";
 import {
-  LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
+  LineChart, Line, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from "recharts";
 
@@ -47,9 +47,6 @@ const SCENARIO_LABEL: Record<string, string> = {
   balanced: "균형",
   safe: "안전우선",
 };
-const SEASON_LABEL: Record<string, string> = { winter: "동절기", deep_winter: "혹한기" };
-const WAFI_TYPES = ["A", "B", "C"] as const;
-const SEASONS = ["winter", "deep_winter"] as const;
 
 export default function DashboardPage() {
   const [stats, setStats] = useState<Stats | null>(null);
@@ -116,25 +113,6 @@ export default function DashboardPage() {
       actual: b.actual_wafi ?? 0,
     }));
 
-    // 시나리오 도넛
-    const scenarioPie = (["min_cost", "balanced", "safe"] as const).map((k) => ({
-      name: SCENARIO_LABEL[k],
-      key: k,
-      value: scenarioCounts[k],
-    }));
-
-    // 계절 × WAFI 타입 히트맵
-    const heat: Record<string, Record<string, number>> = {
-      winter: { A: 0, B: 0, C: 0 },
-      deep_winter: { A: 0, B: 0, C: 0 },
-    };
-    batches.forEach((b) => {
-      const s = b.season;
-      const t = b.selected_wafi_type;
-      if (s && t && heat[s] && (t in heat[s])) heat[s][t]++;
-    });
-    const heatMax = Math.max(1, ...SEASONS.flatMap((s) => WAFI_TYPES.map((t) => heat[s][t])));
-
     // 파이프라인 카운트 (오늘 기준)
     const today = new Date().toISOString().slice(0, 10);
     const todays = batches.filter((b) => b.created_at.slice(0, 10) === today);
@@ -172,11 +150,8 @@ export default function DashboardPage() {
       wafiSavingPct,
       scenarioCounts,
       scenarioTotal,
-      scenarioPie,
       last14,
       last14Wafi,
-      heat,
-      heatMax,
       pipeline,
       missTarget,
       wafiOver,
@@ -319,32 +294,6 @@ export default function DashboardPage() {
               <Bar dataKey="actual" fill="#BA7517" name="실투입" />
             </BarChart>
           </ResponsiveContainer>
-        </ChartCard>
-
-        <ChartCard title="시나리오 채택 분포" subtitle="누적 batch 기준">
-          <ResponsiveContainer width="100%" height={220}>
-            <PieChart>
-              <Pie
-                data={analytics?.scenarioPie ?? []}
-                dataKey="value"
-                nameKey="name"
-                innerRadius={50}
-                outerRadius={80}
-                paddingAngle={2}
-                label={(e: { name: string; value: number }) => `${e.name} ${e.value}`}
-              >
-                {(analytics?.scenarioPie ?? []).map((s) => (
-                  <Cell key={s.key} fill={SCENARIO_COLOR[s.key]} />
-                ))}
-              </Pie>
-              <Tooltip contentStyle={{ fontSize: 11 }} />
-              <Legend wrapperStyle={{ fontSize: 11 }} />
-            </PieChart>
-          </ResponsiveContainer>
-        </ChartCard>
-
-        <ChartCard title="계절 × WAFI 타입 히트맵" subtitle="조건별 선호 첨가제">
-          <Heatmap heat={analytics?.heat} heatMax={analytics?.heatMax ?? 1} />
         </ChartCard>
       </div>
 
@@ -729,57 +678,6 @@ function ChartCard({
         {subtitle && <div style={{ fontSize: 10, color: "var(--color-text-secondary)" }}>{subtitle}</div>}
       </div>
       {children}
-    </div>
-  );
-}
-
-function Heatmap({
-  heat,
-  heatMax,
-}: {
-  heat?: Record<string, Record<string, number>>;
-  heatMax: number;
-}) {
-  if (!heat) {
-    return <div style={{ fontSize: 11, color: "var(--color-text-secondary)", padding: 20 }}>데이터 없음</div>;
-  }
-  return (
-    <div style={{ display: "grid", gridTemplateColumns: "60px repeat(3, 1fr)", gap: 4, padding: "8px 0" }}>
-      <div />
-      {WAFI_TYPES.map((t) => (
-        <div key={t} style={{ textAlign: "center", fontSize: 11, fontWeight: 600, color: "var(--color-text-secondary)" }}>
-          Type {t}
-        </div>
-      ))}
-      {SEASONS.map((s) => (
-        <>
-          <div key={`${s}-label`} style={{ fontSize: 11, fontWeight: 600, color: "var(--color-text-secondary)", display: "flex", alignItems: "center" }}>
-            {SEASON_LABEL[s]}
-          </div>
-          {WAFI_TYPES.map((t) => {
-            const v = heat[s][t];
-            const intensity = v / heatMax;
-            const bg = `rgba(186, 117, 23, ${0.1 + intensity * 0.75})`;
-            return (
-              <div
-                key={`${s}-${t}`}
-                style={{
-                  background: bg,
-                  borderRadius: 4,
-                  padding: "16px 8px",
-                  textAlign: "center",
-                  fontSize: 14,
-                  fontWeight: 700,
-                  color: intensity > 0.5 ? "#fff" : "#854F0B",
-                  fontFamily: "var(--font-mono)",
-                }}
-              >
-                {v}
-              </div>
-            );
-          })}
-        </>
-      ))}
     </div>
   );
 }

@@ -9,6 +9,8 @@ import troubleCasesData from "@/lib/trouble-cases.json";
 
 type Answers = { q1: string | null; q2: string[]; q3: string[]; q4: string[]; q5: string };
 
+type AiSuggestion = { q1: string; q2: string[]; q3: string[]; q4: string[] };
+
 type TroubleCase = {
   id: string;
   date: string;
@@ -17,11 +19,19 @@ type TroubleCase = {
   problem: string;       // 무엇이 문제였는지
   cause: string;         // 추정 원인
   resolution: string;    // 어떻게 해결했는지
+  ai_suggestion?: AiSuggestion;  // AI pre-suggested Q1~Q4 (green hint, not auto-selected)
 };
 
 const SEASON_LABEL: Record<string, string> = { winter: "동절기", deep_winter: "혹한기" };
 
 const TROUBLE_CASES: TroubleCase[] = troubleCasesData as TroubleCase[];
+
+type KnowledgeItem = Awaited<ReturnType<typeof api.listKnowledge>>[number];
+
+const Q1_OPTS: [string, string][] = [["normal", "정상"], ["caution", "주의"], ["risk", "위험"]];
+const AUTHOR_LABEL: Record<string, string> = { junior: "김 연구원", veteran: "이 부장" };
+const q1SelClass = (v: string) =>
+  v === "normal" ? "sel-normal" : v === "caution" ? "sel-caution" : "sel-risk";
 
 export default function InterviewPage() {
   const [answers, setAnswers] = useState<Answers>({ q1: null, q2: [], q3: [], q4: [], q5: "" });
@@ -29,19 +39,35 @@ export default function InterviewPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string>("");
   const [caseIdx, setCaseIdx] = useState(0);
-  const [extractedIds, setExtractedIds] = useState<Set<string>>(new Set());
+  const [extractedMap, setExtractedMap] = useState<Record<string, KnowledgeItem>>({});
   const router = useRouter();
   const { user } = useUser();
 
   const tc = TROUBLE_CASES[caseIdx];
-  const isExtracted = extractedIds.has(tc.id);
+  const entry = extractedMap[tc.id] ?? null;
+  const isExtracted = entry != null;
+  const sug = tc.ai_suggestion;
+
+  const isSuggested = (key: keyof Answers, val: string): boolean => {
+    if (!sug) return false;
+    if (key === "q1") return sug.q1 === val;
+    if (key === "q2") return sug.q2.includes(val);
+    if (key === "q3") return sug.q3.includes(val);
+    if (key === "q4") return sug.q4.includes(val);
+    return false;
+  };
 
   const refreshExtracted = useCallback(async () => {
     try {
       const items = await api.listKnowledge({ limit: 500 });
-      setExtractedIds(new Set(items.map((it) => it.case_id)));
+      const map: Record<string, KnowledgeItem> = {};
+      for (const it of items) {
+        const prev = map[it.case_id];
+        if (!prev || it.created_at > prev.created_at) map[it.case_id] = it;
+      }
+      setExtractedMap(map);
     } catch {
-      // silent — badge just won't show if API fails
+      // silent — badge / extracted view just won't show if API fails
     }
   }, []);
 
@@ -87,13 +113,21 @@ export default function InterviewPage() {
   };
 
   const qLabels = ["Q1. 판단", "Q2. 근거", "Q3. 우선순위", "Q4. 리스크", "Q5. 메모"];
-  const done = [
-    !!answers.q1,
-    answers.q2.length > 0,
-    answers.q3.length > 0,
-    answers.q4.length > 0,
-    !!answers.q5,
-  ];
+  const done = entry
+    ? [
+        true,
+        entry.q2_reasons.length > 0,
+        entry.q3_priorities.length > 0,
+        entry.q4_risks.length > 0,
+        !!entry.q5_memo,
+      ]
+    : [
+        !!answers.q1,
+        answers.q2.length > 0,
+        answers.q3.length > 0,
+        answers.q4.length > 0,
+        !!answers.q5,
+      ];
 
   const optBtn = (
     key: keyof Answers,
@@ -109,10 +143,15 @@ export default function InterviewPage() {
       : val === "caution" ? "sel-caution"
       : val === "risk" ? "sel-risk"
       : "sel-default";
-    const cls = sel ? selClass || defaultClass : "";
+    const suggested = !sel && isSuggested(key, val);
+    const cls = sel ? selClass || defaultClass : suggested ? "ai-sug" : "";
     return (
       <button key={val} className={`opt-btn ${cls}`} onClick={() => toggle(key, val, max)}>
-        {sel && <i className="ti ti-check" style={{ fontSize: 11 }} />}
+        {sel ? (
+          <i className="ti ti-check" style={{ fontSize: 11 }} />
+        ) : suggested ? (
+          <i className="ti ti-sparkles" style={{ fontSize: 11 }} />
+        ) : null}
         {label}
       </button>
     );
@@ -138,7 +177,26 @@ export default function InterviewPage() {
         q5_memo: answers.q5,
         author: user,
       });
-      setExtractedIds((prev) => new Set(prev).add(tc.id));
+      setExtractedMap((prev) => ({
+        ...prev,
+        [tc.id]: {
+          entry_id: "local-" + Date.now(),
+          case_id: tc.id,
+          season: tc.season,
+          blend_components: {},
+          cfpp: 0,
+          cp: 0,
+          pp: 0,
+          ai_draft_decision: "caution",
+          q1_decision: answers.q1 as string,
+          q2_reasons: answers.q2,
+          q3_priorities: answers.q3,
+          q4_risks: answers.q4,
+          q5_memo: answers.q5,
+          author: user,
+          created_at: new Date().toISOString(),
+        },
+      }));
       setSaved(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -194,6 +252,12 @@ export default function InterviewPage() {
 
           <div style={{ fontSize: 10, color: "var(--color-text-secondary)", marginTop: 4, paddingTop: 8, borderTop: "0.5px dashed var(--color-border-tertiary)" }}>
             위 사례에 대해 아래 Q1~Q5를 답변해 주세요.
+            {!isExtracted && sug && (
+              <span style={{ marginLeft: 6, color: "#3B6D11", fontWeight: 500 }}>
+                <i className="ti ti-sparkles" style={{ fontSize: 10, marginRight: 2 }} />
+                초록 점선 = AI 제안 (참고용, 직접 선택하세요)
+              </span>
+            )}
           </div>
         </div>
 
@@ -249,6 +313,9 @@ export default function InterviewPage() {
         </div>
       </div>
 
+      {entry ? (
+        <ExtractedView entry={entry} />
+      ) : (
       <div className="iv-q-list">
         <div className="iv-q-block">
           <div className="q-section-title">Q1. 판단</div>
@@ -286,6 +353,7 @@ export default function InterviewPage() {
           />
         </div>
       </div>
+      )}
 
       <div className="iv-actions">
         <div style={{ display: "flex", gap: 6 }}>
@@ -311,14 +379,16 @@ export default function InterviewPage() {
               {error}
             </span>
           )}
-          <button
-            className={answers.q1 ? "btn-primary" : "btn-secondary"}
-            style={{ fontSize: 12, padding: "6px 14px", opacity: saving ? 0.6 : 1 }}
-            onClick={save}
-            disabled={saving || !answers.q1}
-          >
-            {saving ? "저장 중..." : "저장 → 다음 사례"}
-          </button>
+          {!entry && (
+            <button
+              className={answers.q1 ? "btn-primary" : "btn-secondary"}
+              style={{ fontSize: 12, padding: "6px 14px", opacity: saving ? 0.6 : 1 }}
+              onClick={save}
+              disabled={saving || !answers.q1}
+            >
+              {saving ? "저장 중..." : "저장 → 다음 사례"}
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -332,6 +402,66 @@ function TroubleLine({ icon, color, label, text }: { icon: string; color: string
       <div style={{ fontSize: 12, lineHeight: 1.6, color: "var(--color-text-primary)" }}>
         <span style={{ fontWeight: 600, color, marginRight: 4 }}>{label}</span>
         {text}
+      </div>
+    </div>
+  );
+}
+
+function ExtractedView({ entry }: { entry: KnowledgeItem }) {
+  return (
+    <div className="iv-q-list">
+      <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, color: "#3B6D11", marginBottom: 2 }}>
+        <i className="ti ti-archive" style={{ fontSize: 13 }} />
+        추출 완료 — {AUTHOR_LABEL[entry.author] ?? entry.author} · {entry.created_at.slice(0, 10)}
+      </div>
+      <OptionRow title="Q1. 판단" opts={Q1_OPTS} selected={[entry.q1_decision]} selClassOf={q1SelClass} />
+      <OptionRow title="Q2. 판단 근거" opts={Q2_OPTS} selected={entry.q2_reasons} />
+      <OptionRow title="Q3. 확인 우선순위" opts={Q3_OPTS} selected={entry.q3_priorities} />
+      <OptionRow title="Q4. 리스크 포인트" opts={Q4_OPTS} selected={entry.q4_risks} />
+      <div className="iv-q-block">
+        <div className="q-section-title">Q5. 한 줄 기준 메모</div>
+        <div
+          style={{
+            fontSize: 12,
+            lineHeight: 1.6,
+            color: "var(--color-text-primary)",
+            padding: "8px 10px",
+            background: "var(--color-background-secondary)",
+            borderRadius: 4,
+          }}
+        >
+          {entry.q5_memo || "—"}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function OptionRow({
+  title,
+  opts,
+  selected,
+  selClassOf,
+}: {
+  title: string;
+  opts: [string, string][];
+  selected: string[];
+  selClassOf?: (val: string) => string;
+}) {
+  return (
+    <div className="iv-q-block">
+      <div className="q-section-title">{title}</div>
+      <div className="opt-group">
+        {opts.map(([v, l]) => {
+          const sel = selected.includes(v);
+          const cls = sel ? (selClassOf ? selClassOf(v) : "sel-default") : "";
+          return (
+            <span key={v} className={`opt-btn ${cls}`} style={{ cursor: "default" }}>
+              {sel && <i className="ti ti-check" style={{ fontSize: 11 }} />}
+              {l}
+            </span>
+          );
+        })}
       </div>
     </div>
   );

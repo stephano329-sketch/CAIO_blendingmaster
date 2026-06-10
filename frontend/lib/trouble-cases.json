@@ -6,7 +6,13 @@
     "situation": "혹한기 디젤 출하 배치. LGO 40% / HGO 18% / LCO 32% / Kero 10%, WAFI Type B 280ppm 투입.",
     "problem": "출하 후 고객사 차량 동결 클레임. 출하 배치 CFPP 실측 -14°C로 규격(-18°C) 미달.",
     "cause": "LCO 32% 과다 + 직전 탱크에 하절기 잔류물 혼입. WAFI Type B 280ppm으로는 보정 한계 초과 추정.",
-    "resolution": "재블렌딩으로 LCO 22%로 하향 + Kero 8% 추가 + WAFI Type C 320ppm으로 변경. 재검 CFPP -19.5°C 안착."
+    "resolution": "재블렌딩으로 LCO 22%로 하향 + Kero 8% 추가 + WAFI Type C 320ppm으로 변경. 재검 CFPP -19.5°C 안착.",
+    "ai_suggestion": {
+      "q1": "risk",
+      "q2": ["blend_component", "tank_history"],
+      "q3": ["blend_ratio", "additive_dose", "tank_history"],
+      "q4": ["post_issue", "historical"]
+    }
   },
   {
     "id": "TS-2025-02",
@@ -15,7 +21,13 @@
     "situation": "동절기 초입 배치. LGO 45% / HGO 25% / LCO 20% / Kero 7% / 바이오디젤 3%, WAFI Type A 150ppm.",
     "problem": "CP가 예측 대비 +4°C 상승. 출하 보류 발생.",
     "cause": "HGO 비율이 평소 대비 8%p 높았고, 파라핀 계열 농축으로 CP가 CFPP보다 먼저 상승. CP-CFPP 갭 좁아짐.",
-    "resolution": "HGO 25% → 18%로 조정, LGO 비율 보강. WAFI 표준 유지. CP -8°C, CFPP -14°C 회복."
+    "resolution": "HGO 25% → 18%로 조정, LGO 비율 보강. WAFI 표준 유지. CP -8°C, CFPP -14°C 회복.",
+    "ai_suggestion": {
+      "q1": "caution",
+      "q2": ["blend_component", "metric_level"],
+      "q3": ["blend_ratio", "retest"],
+      "q4": ["within_spec", "conditional"]
+    }
   },
   {
     "id": "TS-2024-08",
@@ -24,7 +36,13 @@
     "situation": "혹한기 목표 CFPP -21°C 배치. LGO 35% / HGO 20% / LCO 30% / Kero 12% / 바이오디젤 3%.",
     "problem": "WAFI 400ppm 투입에도 CFPP -18°C에서 정체. 목표 미달 + 첨가제 비용 누적으로 마진 악화.",
     "cause": "직전 배치 잔류물(여름철 고유점 경유) 영향. WAFI 효과가 잔류 파라핀 구조에 의해 둔화된 것으로 추정.",
-    "resolution": "탱크 드레인 후 Kero 12% 선투입으로 베이스 저온성상 개선. WAFI Type B 220ppm으로 목표 도달, 비용 35% 절감."
+    "resolution": "탱크 드레인 후 Kero 12% 선투입으로 베이스 저온성상 개선. WAFI Type B 220ppm으로 목표 도달, 비용 35% 절감.",
+    "ai_suggestion": {
+      "q1": "caution",
+      "q2": ["tank_history", "additive"],
+      "q3": ["tank_history", "additive_dose", "blend_ratio"],
+      "q4": ["historical", "conditional"]
+    }
   },
   {
     "id": "TS-2025-03",
@@ -33,7 +51,13 @@
     "situation": "혹한기 신규 산지 LCO 도입 첫 배치. LGO 38% / HGO 22% / LCO 28%(신규) / Kero 9% / 바이오디젤 3%, WAFI Type C 300ppm.",
     "problem": "CFPP는 -19°C로 목표 도달했으나 PP가 -8°C로 비정상적으로 높게 측정. 보관 중 왁스 침전 우려.",
     "cause": "신규 산지 LCO의 노말파라핀 분포가 기존 산지와 달라 WAFI Type C와의 상호작용이 비효율적. WAFI는 CFPP만 보정하고 PP 개선 효과 미미.",
-    "resolution": "WAFI Type C → Type B + PPD(유동점 강하제) 병용 100ppm 추가 투입. PP -13°C 회복. 신규 산지는 PPD 병용 SOP로 등록."
+    "resolution": "WAFI Type C → Type B + PPD(유동점 강하제) 병용 100ppm 추가 투입. PP -13°C 회복. 신규 산지는 PPD 병용 SOP로 등록.",
+    "ai_suggestion": {
+      "q1": "caution",
+      "q2": ["blend_component", "additive"],
+      "q3": ["additive_dose", "retest", "process_condition"],
+      "q4": ["post_issue", "conditional"]
+    }
   },
   {
     "id": "TS-2025-04",
@@ -42,7 +66,13 @@
     "situation": "혹한기 야간 출하 배치. LGO 42% / HGO 20% / LCO 25% / Kero 10% / 바이오디젤 3%, WAFI Type B 260ppm.",
     "problem": "출하 검사 CFPP -19°C 통과했으나 운송 중 차량 연료필터 막힘 신고 3건 접수.",
     "cause": "실험실 CFPP는 안정적이었으나, 야간 외기 영향으로 보관/운송 중 실제 노출 온도가 -25°C 이하로 떨어지며 침전. 안전 마진 부족.",
-    "resolution": "혹한기 야간 출하 배치는 목표 CFPP를 -23°C로 상향(2°C 안전 마진). WAFI Type B 320ppm으로 재조정. 이후 동일 클레임 0건."
+    "resolution": "혹한기 야간 출하 배치는 목표 CFPP를 -23°C로 상향(2°C 안전 마진). WAFI Type B 320ppm으로 재조정. 이후 동일 클레임 0건.",
+    "ai_suggestion": {
+      "q1": "risk",
+      "q2": ["seasonality", "metric_level"],
+      "q3": ["process_condition", "additive_dose", "retest"],
+      "q4": ["post_issue"]
+    }
   },
   {
     "id": "TS-2024-11",
@@ -51,7 +81,13 @@
     "situation": "동절기 전환 직후 첫 배치. LGO 50% / HGO 25% / LCO 18% / Kero 5% / 바이오디젤 2%, WAFI Type A 100ppm.",
     "problem": "CFPP -10°C로 목표(-14°C) 미달. WAFI 투입량이 충분치 않다는 보고.",
     "cause": "WAFI Type A는 동절기 마일드 조건용. 직전 하절기 잔류물(파라핀 농축)이 남아 있어 Type A 100ppm으로는 베이스라인 보정에 부족.",
-    "resolution": "WAFI Type A → Type B로 변경 + 180ppm 상향. CFPP -15.5°C 안착. 전환 시즌 첫 1주는 Type B 기본 적용으로 운영 규칙 변경."
+    "resolution": "WAFI Type A → Type B로 변경 + 180ppm 상향. CFPP -15.5°C 안착. 전환 시즌 첫 1주는 Type B 기본 적용으로 운영 규칙 변경.",
+    "ai_suggestion": {
+      "q1": "caution",
+      "q2": ["additive", "tank_history"],
+      "q3": ["additive_dose", "tank_history"],
+      "q4": ["historical", "conditional"]
+    }
   },
   {
     "id": "TS-2025-05",
@@ -60,7 +96,13 @@
     "situation": "동절기 바이오디젤 혼합 비율 상향 시범 배치. LGO 45% / HGO 22% / LCO 20% / Kero 8% / 바이오디젤 5%, WAFI Type B 200ppm.",
     "problem": "CFPP -12°C로 목표(-14°C) 미달. 바이오디젤 비율 상향에 따른 저온성상 악화.",
     "cause": "바이오디젤(FAME)의 포화지방산이 저온에서 결정화. 일반 WAFI는 FAME에 대한 효과가 제한적.",
-    "resolution": "WAFI Type B → FAME 친화형 WAFI Type C로 변경, 250ppm 투입. CFPP -14.5°C 도달. 바이오디젤 5%+ 배치는 Type C 의무 적용."
+    "resolution": "WAFI Type B → FAME 친화형 WAFI Type C로 변경, 250ppm 투입. CFPP -14.5°C 도달. 바이오디젤 5%+ 배치는 Type C 의무 적용.",
+    "ai_suggestion": {
+      "q1": "caution",
+      "q2": ["blend_component", "additive"],
+      "q3": ["additive_dose", "blend_ratio"],
+      "q4": ["conditional"]
+    }
   },
   {
     "id": "TS-2024-12",
@@ -69,6 +111,12 @@
     "situation": "혹한기 연말 대량 출하 배치. LGO 36% / HGO 18% / LCO 33% / Kero 10% / 바이오디젤 3%, WAFI Type C 340ppm.",
     "problem": "탱크 4기 동시 블렌딩 중 한 탱크만 CFPP -13°C로 비정상. 나머지 3기는 -19°C 정상.",
     "cause": "문제 탱크 직전 작업이 등유 저장이었고 잔류 잔량 조사 누락. Kero가 예상보다 4%p 추가 혼입되어 비율 어긋남.",
-    "resolution": "문제 탱크 재블렌딩 (LCO 5% 추가) + 표준 탱크 이력 체크리스트 강화. 탱크 전환 시 잔량 3% 이상이면 사전 드레인 필수화."
+    "resolution": "문제 탱크 재블렌딩 (LCO 5% 추가) + 표준 탱크 이력 체크리스트 강화. 탱크 전환 시 잔량 3% 이상이면 사전 드레인 필수화.",
+    "ai_suggestion": {
+      "q1": "caution",
+      "q2": ["tank_history", "blend_component"],
+      "q3": ["tank_history", "blend_ratio", "retest"],
+      "q4": ["historical", "conditional"]
+    }
   }
 ]
