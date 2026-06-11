@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
-export const maxDuration = 120; // seconds (overrides default ~30s timeout)
+export const maxDuration = 60; // seconds — Vercel Hobby plan ceiling (Pro allows up to 300)
 export const dynamic = "force-dynamic";
 
 const BACKEND = process.env.BACKEND_URL || "http://localhost:8000";

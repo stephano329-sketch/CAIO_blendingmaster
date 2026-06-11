@@ -1,0 +1,21 @@
+# Render Blueprint — Blending Master FastAPI backend
+# Docs: https://render.com/docs/blueprint-spec
+#
+# Usage: Render Dashboard → New + → Blueprint → connect this repo.
+# Render reads this file and provisions the service below.
+# ANTHROPIC_API_KEY is marked sync:false → you enter it (secret) in the dashboard.
+services:
+  - type: web
+    name: blending-master-api
+    runtime: python
+    plan: free
+    branch: main
+    # Imports use the `backend.` package prefix, so run from repo root.
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: ANTHROPIC_API_KEY
+        sync: false
